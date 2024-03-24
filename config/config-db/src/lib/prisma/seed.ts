@@ -143,7 +143,7 @@ async function fillDb() {
     },
   });
   await prisma.trainingEntity.upsert({
-    where: { trainingId: 101 },
+    where: { trainingId: 11 },
     update: {},
     create: {
       trainingId: 101,
