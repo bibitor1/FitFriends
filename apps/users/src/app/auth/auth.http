@@ -1,0 +1,94 @@
+# Create a new user
+POST http://localhost:4000/api/auth/register HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "Евгений",
+  "email": "aaa@gmail.com",
+  "avatar": "avatar.jpg",
+  "password": "12345a",
+  "gender": "мужской",
+  "birthDate": "1974-01-25T00:00:00.000Z",
+  "role": "тренер",
+  "description": "Сброшу ка я Вам жирок!",
+  "location": "Пионерская",
+  "trainer": {
+    "certificate": "sertificate.pdf",
+    "merits": "У меня вся грудь в орденах!",
+    "isPersonalTraining": true
+  },
+  "level": "профессионал",
+  "typesOfTraining": ["кроссфит", "бег", "бокс"]
+}
+###
+
+POST http://localhost:4000/api/auth/register HTTP/1.1
+Content-Type: application/json
+
+{
+  "name": "Евгений",
+  "email": "aaa1@gmail.com",
+  "avatar": "avatar.jpg",
+  "password": "12345a",
+  "gender": "мужской",
+  "birthDate": "1974-01-25T00:00:00.000Z",
+  "role": "пользователь",
+  "description": "Сброшу ка я жирок!",
+  "location": "Удельная",
+  "client": {
+  "timeOfTraining": "30-50 мин",
+  "caloryLosingPlanTotal": 2000,
+  "caloryLosingPlanDaily": 1000,
+  "isReady": true
+  },
+  "level": "профессионал",
+  "typesOfTraining": ["кроссфит", "бег", "бокс"]
+}
+
+###
+
+
+# Update user
+PATCH http://localhost:4000/api/auth/update HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoibWFib3JpQGdtYWlsLmNvbSIsInJvbGUiOiLRgtGA0LXQvdC10YAiLCJuYW1lIjoi0JDQu9C10LrRgdC10LkiLCJpYXQiOjE2OTgwNzY1MTcsImV4cCI6MTY5ODA3NzQxN30.mEpc0jrrvxxJ9L0CommCI3C3IPX6S5x_DGofC-3sC44
+Content-Type: application/json
+
+{
+  "trainer": {"merits": "Пять лет здесь помогаю железо таскать!"}
+}
+
+###
+
+# Get user by ID
+GET http://localhost:4000/api/auth/5 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NCwiZW1haWwiOiJtYWJvcmkzQGdtYWlsLmNvbSIsInJvbGUiOiLRgtGA0LXQvdC10YAiLCJuYW1lIjoi0JDQu9C10LrRgdC10LkiLCJpYXQiOjE2OTgwNzI0MjksImV4cCI6MTY5ODA3MzMyOX0.hEtgnNuUkJnLYslo1dy6v-08ufzhVqwTcNrpriOXLG8
+###
+
+# Login user by email and password
+POST http://localhost:4000/api/auth/login HTTP/1.1
+Content-Type: application/json
+
+{
+  "email": "aaa@gmail.com",
+  "password": "12345a"
+}
+###
+# Get user  feed
+GET http://localhost:4000/api/auth/feed?limit=4&page=1&role=пользователь&location=Пионерская,Удельная&typesOfTraining=йога,кроссфит HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjIsImVtYWlsIjoibWFib3JpMUBnbWFpbC5jb20iLCJyb2xlIjoi0L_QvtC70YzQt9C-0LLQsNGC0LXQu9GMIiwibmFtZSI6ItCQ0LvQtdC60YHQtdC5IiwiaWF0IjoxNjk4MTQyMjkxLCJleHAiOjE2OTgxNDMxOTF9.wQJ9_8-rg-nTe63olxegN7oHLq1RcxENly6Gn7A5njg
+###
+
+# Get new JWT pair
+
+POST http://localhost:4000/api/auth/refresh HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoibWFib3JpQGdtYWlsLmNvbSIsInJvbGUiOiLRgtGA0LXQvdC10YAiLCJuYW1lIjoi0JDQu9C10LrRgdC10LkiLCJ0b2tlbklkIjoiMjBkMjllOWMtZTUyNi00ZDNjLWExNDktZDJlY2ViOGIyNzgxIiwiaWF0IjoxNjk4MDkxMjUzLCJleHAiOjE2OTg2OTYwNTN9.ymBKdfjjB4tXiJQ3I37CebVaNp8KiGmnjmUQ4DXvraw
+
+
+###
+
+# Check user token
+POST http://localhost:4000/api/auth/check HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoibWFib3JpQGdtYWlsLmNvbSIsInJvbGUiOiLRgtGA0LXQvdC10YAiLCJuYW1lIjoi0JDQu9C10LrRgdC10LkiLCJpYXQiOjE2OTgwOTY2MTAsImV4cCI6MTY5ODA5NzUxMH0.8Pd4VFwOTXp3JIY-WLrL2Wb2lBK49dMwErZQAkR7SP8
+
+
+###
