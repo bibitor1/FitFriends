@@ -1,4 +1,4 @@
-import { Token } from '@prisma/client';
+import { Token } from '@prisma/client
 
 export interface ITokens {
   accessToken: string;

@@ -26,8 +26,10 @@ export default registerAs('application', (): ApplicationConfig => {
   const errors = validateSync(appEnvironment, {
     skipMissingProperties: false,
   });
+
   if (errors.length > 0) {
     throw new Error(errors.toString());
   }
+
   return config;
 });

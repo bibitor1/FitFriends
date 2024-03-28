@@ -21,6 +21,7 @@ export class AppEnvironment {
   @Min(MIN_PORT)
   @Max(MAX_PORT)
   public port: number;
+
   @IsString({
     message: EnvValidationMessage.EnvironmentRequired,
   })
