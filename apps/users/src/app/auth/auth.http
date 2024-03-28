@@ -52,7 +52,7 @@ Content-Type: application/json
 # Update user
 PATCH http://localhost:4000/api/users/update HTTP/1.1
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiYWFhQGdtYWlsLmNvbSIsInJvbGUiOiLRgtGA0LXQvdC10YAiLCJuYW1lIjoi0JXQstCz0LXQvdC40LkiLCJpYXQiOjE3MTEzMDM1NzIsImV4cCI6MTcxMTMwNDQ3Mn0.Bap8NWuqXWTtRT4WO3RqEzWkfJE9TNLds7k8_89gypY
-Content-Type: application/json
+ontent-Type: application/json
 
 {
   "description": "Пять лет здесь помогаю железо таскать!"
