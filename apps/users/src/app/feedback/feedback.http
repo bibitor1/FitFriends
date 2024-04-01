@@ -2,11 +2,11 @@
 
 POST http://localhost:4000/api/feedbacks/create HTTP/1.1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsImVtYWlsIjoiYWFhQGdtYWlsLmNvbSIsInJvbGUiOiLRgtGA0LXQvdC10YAiLCJuYW1lIjoi0JXQstCz0LXQvdC40LkiLCJpYXQiOjE3MTEzMDM1NzIsImV4cCI6MTcxMTMwNDQ3Mn0.Bap8NWuqXWTtRT4WO3RqEzWkfJE9TNLds7k8_89gypY
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjMsImVtYWlsIjoibWFib3JpMkBnbWFpbC5jb20iLCJyb2xlIjoi0L_QvtC70YzQt9C-0LLQsNGC0LXQu9GMIiwibmFtZSI6ItCQ0LvQtdC60YHQtdC5IiwiaWF0IjoxNjk4MzM5NzM5LCJleHAiOjE2OTgzNDA2Mzl9.qV2E_RbnWw5SMNYyyzpRxJVgQaMl5sIDx6abR93GLMc
 
 {
-  "trainingId": 1,
-  "rating": 3,
+  "trainingId": 2,
+  "rating": 4,
   "text": "Минимум тут должно быть 100 символов. Максимум 1024. Да я встать не могу после такой тренировки. Да я встать не могу после такой тренировки. Да я встать не могу после такой тренировки."
 }
 

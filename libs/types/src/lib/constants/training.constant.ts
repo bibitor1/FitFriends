@@ -10,4 +10,5 @@ export enum GenderOfTraining {
   ForAll = 'для всех',
 }
 
-export const FEEDBACK_TEXT_NOT_VALID = 'Feedback text min length is 100, max length is 1024 symbols';
+export const FEEDBACK_TEXT_NOT_VALID =
+  'Feedback text min length is 100, max length is 1024 symbols';
