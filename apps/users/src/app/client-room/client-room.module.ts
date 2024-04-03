@@ -7,8 +7,10 @@ import { Module } from '@nestjs/common';
 import { OrderModule } from '../order/order.module';
 import { FriendModule } from '../friend/friend.module';
 import { PersonalOrderModule } from '../personal-order/personal-order.module';
-import { TrainerRoomController } from './trainer-room.controller';
-import { TrainerRoomService } from './trainer-room.service';
+import { ClientRoomController } from './client-room.controller';
+import { ClientRoomService } from './client-room.service';
+import { BalanceModule } from '../balance/balance.module';
+import { FeedbackModule } from '../feedback/feedback.module';
 
 @Module({
   imports: [
@@ -21,8 +23,10 @@ import { TrainerRoomService } from './trainer-room.service';
     FriendModule,
     OrderModule,
     PersonalOrderModule,
+    BalanceModule,
+    FeedbackModule,
   ],
-  controllers: [TrainerRoomController],
-  providers: [TrainerRoomService],
+  controllers: [ClientRoomController],
+  providers: [ClientRoomService],
 })
-export class TrainerRoomModule {}
+export class ClientRoomModule {}

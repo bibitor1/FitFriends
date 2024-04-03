@@ -1,48 +1,53 @@
-import { Expose } from 'class-transformer';
-import { ApiProperty } from '@nestjs/swagger';
 import { TypeOfOrder, TypeOfPayment } from '@fit-friends/types';
+import { ApiProperty } from '@nestjs/swagger';
+import { IsEnum, IsNumber, IsOptional, IsPositive, Min } from 'class-validator';
 
-export class OrderRdo {
-  @ApiProperty({
-    description: 'The uniq order ID',
-    example: 123,
-    required: true,
-  })
-  @Expose()
-  public id!: number;
-
+export class CreateOrderDto {
   @ApiProperty({
     description: 'Training or season pass to gym',
     example: 'Абонемент',
     enum: TypeOfOrder,
     required: true,
   })
-  @Expose()
+  @IsEnum(TypeOfOrder)
   public type!: TypeOfOrder;
+
+  @ApiProperty({
+    description: 'Training id',
+    example: '1',
+    required: true,
+  })
+  @IsOptional()
+  @IsNumber()
+  public trainingId!: number;
 
   @ApiProperty({
     description: 'Subscription price',
     example: 1234,
     required: true,
   })
-  @Expose()
+  @IsNumber()
+  @IsPositive()
+  @Min(0)
   public price!: number;
 
   @ApiProperty({
     description: 'Trainings quantity',
     example: 12,
+    minimum: 1,
     required: true,
   })
-  @Expose()
+  @IsNumber()
+  @Min(1)
+  @IsPositive()
   public quantity!: number;
 
   @ApiProperty({
-    description: 'Total price',
-    example: 14808,
+    description: 'Payment sum',
+    example: '1234',
     required: true,
   })
-  @Expose()
-  public totalPrice!: number;
+  public sumPrice!: number;
 
   @ApiProperty({
     description: 'Payment method',
@@ -50,14 +55,5 @@ export class OrderRdo {
     enum: TypeOfPayment,
     required: true,
   })
-  @Expose()
   public typeOfPayment!: TypeOfPayment;
-
-  @ApiProperty({
-    description: 'Order creation date',
-    example: '2023-03-28T16:14:35.132Z',
-    required: true,
-  })
-  @Expose()
-  public createdAt!: string;
 }

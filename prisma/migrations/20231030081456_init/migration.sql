@@ -64,23 +64,13 @@ CREATE TABLE "trainings" (
     "calories_qtt" INTEGER NOT NULL DEFAULT 0,
     "description" TEXT NOT NULL DEFAULT '',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "training_gender" TEXT NOT NULL DEFAULT '',
+    "gender" TEXT NOT NULL DEFAULT '',
     "video" TEXT NOT NULL DEFAULT '',
     "rating" DOUBLE PRECISION NOT NULL DEFAULT 0,
     "trainerId" INTEGER NOT NULL DEFAULT 0,
     "is_promo" BOOLEAN NOT NULL DEFAULT false,
 
     CONSTRAINT "trainings_pkey" PRIMARY KEY ("id")
-);
-
--- CreateTable
-CREATE TABLE "user_balances" (
-    "id" SERIAL NOT NULL,
-    "user_id" INTEGER NOT NULL,
-    "training_id" INTEGER NOT NULL,
-    "training_qtt" INTEGER NOT NULL,
-
-    CONSTRAINT "user_balances_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -96,21 +86,32 @@ CREATE TABLE "feed_backs" (
 );
 
 -- CreateTable
-CREATE TABLE "order_trainings" (
+CREATE TABLE "user_balances" (
     "id" SERIAL NOT NULL,
     "user_id" INTEGER NOT NULL,
-    "typeOfTraining" TEXT NOT NULL DEFAULT '',
     "training_id" INTEGER NOT NULL,
-    "price" INTEGER NOT NULL DEFAULT 0,
-    "quantity" INTEGER NOT NULL DEFAULT 0,
-    "typeOfPayment" TEXT NOT NULL DEFAULT '',
-    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "training_qtt" INTEGER NOT NULL,
 
-    CONSTRAINT "order_trainings_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "user_balances_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "personal_order_trainings" (
+CREATE TABLE "orders" (
+    "id" SERIAL NOT NULL,
+    "user_id" INTEGER NOT NULL,
+    "type" TEXT NOT NULL DEFAULT '',
+    "training_id" INTEGER NOT NULL,
+    "price" INTEGER NOT NULL DEFAULT 0,
+    "quantity" INTEGER NOT NULL DEFAULT 0,
+    "sum_price" INTEGER NOT NULL DEFAULT 0,
+    "typeOfPayment" TEXT NOT NULL DEFAULT '',
+    "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "orders_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "personal_order" (
     "id" SERIAL NOT NULL,
     "user_id" INTEGER NOT NULL,
     "trainer_id" INTEGER NOT NULL,
@@ -118,17 +119,17 @@ CREATE TABLE "personal_order_trainings" (
     "update_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "order_status" TEXT NOT NULL DEFAULT '',
 
-    CONSTRAINT "personal_order_trainings_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "personal_order_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
-CREATE TABLE "user_friends" (
+CREATE TABLE "friends" (
     "id" SERIAL NOT NULL,
     "user_id" INTEGER NOT NULL,
     "friend_id" INTEGER NOT NULL,
     "is_confirmed" BOOLEAN NOT NULL DEFAULT false,
 
-    CONSTRAINT "user_friends_pkey" PRIMARY KEY ("id")
+    CONSTRAINT "friends_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -185,16 +186,16 @@ ALTER TABLE "trainers" ADD CONSTRAINT "trainers_user_id_fkey" FOREIGN KEY ("user
 ALTER TABLE "tokens" ADD CONSTRAINT "tokens_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("user_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "user_balances" ADD CONSTRAINT "user_balances_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("user_id") ON DELETE CASCADE ON UPDATE CASCADE;
-
--- AddForeignKey
 ALTER TABLE "feed_backs" ADD CONSTRAINT "feed_backs_training_id_fkey" FOREIGN KEY ("training_id") REFERENCES "trainings"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "order_trainings" ADD CONSTRAINT "order_trainings_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("user_id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "user_balances" ADD CONSTRAINT "user_balances_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("user_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "personal_order_trainings" ADD CONSTRAINT "personal_order_trainings_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("user_id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "orders" ADD CONSTRAINT "orders_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("user_id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "user_friends" ADD CONSTRAINT "user_friends_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("user_id") ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE "personal_order" ADD CONSTRAINT "personal_order_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("user_id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "friends" ADD CONSTRAINT "friends_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("user_id") ON DELETE CASCADE ON UPDATE CASCADE;

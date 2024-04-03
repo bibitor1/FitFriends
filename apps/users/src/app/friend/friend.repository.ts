@@ -9,8 +9,8 @@ export class FriendRepository
 {
   constructor(private readonly prisma: PrismaService) {}
 
-  public async create(userFriendEntity: FriendEntity): Promise<IFriend> {
-    const entity = userFriendEntity.toObject();
+  public async create(friendEntity: FriendEntity): Promise<IFriend> {
+    const entity = friendEntity.toObject();
     return await this.prisma.friend.create({
       data: { ...entity },
     });
@@ -26,6 +26,10 @@ export class FriendRepository
 
   public async findByUserId(userId: number): Promise<IFriend[] | null> {
     return await this.prisma.friend.findMany({ where: { userId } });
+  }
+
+  public async findByFriendId(friendId: number): Promise<IFriend[] | null> {
+    return await this.prisma.friend.findMany({ where: { friendId } });
   }
 
   public async findByUserIdAndFriendId(

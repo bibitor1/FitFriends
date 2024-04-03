@@ -2,16 +2,16 @@ import { PrismaClient } from '@prisma/client';
 import { faker } from '@faker-js/faker';
 
 // такие пути импортов для ts-node, иначе не работает
-import { OrderStatus } from '../libs/types/src/lib/order-status.enum';
-import { TrainingDuration } from '../libs/types/src/lib/training-duration.enum';
-import { TypeOfOrder } from '../libs/types/src/lib/type-of-order.enum';
-import { TypeOfPayment } from '../libs/types/src/lib/type-of-payment.enum';
-import { UserGender } from '../libs/types/src/lib/user-gender.enum';
-import { UserLevel } from '../libs/types/src/lib/user-level.enum';
-import { UserLocation } from '../libs/types/src/lib/user-location.enum';
-import { UserRole } from '../libs/types/src/lib/user-role.enum';
-import { UserTypesTraining } from '../libs/types/src/lib/user-types-training.enum';
-import { trainingGender } from '../libs/types/src/lib/constants/validation.constants';
+import { OrderStatus } from '../../../../types/src/lib/order-status.enum';
+import { TrainingDuration } from '../../../../types/src/lib/training-duration.enum';
+import { TypeOfOrder } from '../../../../types/src/lib/type-of-order.enum';
+import { TypeOfPayment } from '../../../../types/src/lib/type-of-payment.enum';
+import { UserGender } from '../../../../types/src/lib/user-gender.enum';
+import { UserLevel } from '../../../../types/src/lib/user-level.enum';
+import { UserLocation } from '../../../../types/src/lib/user-location.enum';
+import { UserRole } from '../../../../types/src/lib/user-role.enum';
+import { UserTypesTraining } from '../../../../types/src/lib/user-types-training.enum';
+import { trainingGender } from '../../../../types/src/lib/constants/validation.constants';
 
 const ITEM_COUNT = 100;
 
