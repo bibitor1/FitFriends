@@ -6,7 +6,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjMwNiwiZW1ha
 Content-Type: application/json
 
 {
-  "title": "Побегаем4!",
+  "title": "Побегаем!",
   "backgroundPicture": "bg-image1.jpg" ,
   "levelOfUser": "любитель",
   "typeOfTraining": "бег",
