@@ -11,6 +11,8 @@ import { ClientRoomController } from './client-room.controller';
 import { ClientRoomService } from './client-room.service';
 import { BalanceModule } from '../balance/balance.module';
 import { FeedbackModule } from '../feedback/feedback.module';
+import { NotifyModule } from '../notify/notify.module';
+import { SubscriberModule } from '../subscriber/subscriber.module';
 
 @Module({
   imports: [
@@ -25,6 +27,8 @@ import { FeedbackModule } from '../feedback/feedback.module';
     PersonalOrderModule,
     BalanceModule,
     FeedbackModule,
+    NotifyModule,
+    SubscriberModule,
   ],
   controllers: [ClientRoomController],
   providers: [ClientRoomService],

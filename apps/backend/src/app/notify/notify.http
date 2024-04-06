@@ -1,0 +1,11 @@
+# Get all user notify
+
+GET http://localhost:4000/api/notify HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEwMSwiZW1haWwiOiJtYWJvcmkxQGdtYWlsLmNvbSIsInJvbGUiOiLRgtGA0LXQvdC10YAiLCJuYW1lIjoi0JDQu9C10LrRgdC10LkiLCJpYXQiOjE2OTkxOTY3MTQsImV4cCI6MTY5OTIwMzYxNH0.t65VMIrl6XeiJql00ZEawWdQ6ucMPbDfiFyJkzeXiYE
+###
+
+
+#Delete notify
+
+DELETE http://localhost:4000/api/notify/3 HTTP/1.1
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEwMSwiZW1haWwiOiJtYWJvcmkxQGdtYWlsLmNvbSIsInJvbGUiOiLRgtGA0LXQvdC10YAiLCJuYW1lIjoi0JDQu9C10LrRgdC10LkiLCJpYXQiOjE2OTkxOTY3MTQsImV4cCI6MTY5OTIwMzYxNH0.t65VMIrl6XeiJql00ZEawWdQ6ucMPbDfiFyJkzeXiYE

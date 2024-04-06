@@ -115,6 +115,7 @@ model Order {
   id            Int      @id @default(autoincrement())
   userId        Int      @map("user_id")
   type          String   @default("")
+  trainerId     Int      @map("trainer_id")
   trainingId    Int      @map("training_id")
   price         Int      @default(0)
   quantity      Int      @default(0)
@@ -168,11 +169,11 @@ model Subscriber {
   @@map("subscribers")
 }
 
-model Notification {
-  id                  Int    @id @default(autoincrement())
-  targetUserId        Int    @map("target_user_id")
-  typesOfNotification String
-  askingUserId        Int    @map("asking_user_id")
+model Notify {
+  id              Int      @id @default(autoincrement())
+  targetUserEmail String   @map("target_user_id")
+  text            String   @default("")
+  createdAt       DateTime @default(now()) @map("created_at")
 
   @@map("notifications")
 }

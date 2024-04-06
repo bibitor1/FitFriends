@@ -20,7 +20,8 @@ import { FriendRdo } from './rdo/Friend.rdo';
 import { BalanceRdo } from './rdo/balance.rdo';
 import { OrderRdo } from '../order/rdo/order.rdo';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { TrainingRdo } from '../training/rdo/training.tdo';
+import { SubscriberRdo } from './rdo/subscriber.rdo';
+import { TrainingRdo } from '../trainer-room/rdo/training.rdo';
 
 @ApiTags('client-room')
 @Controller('client')
@@ -88,6 +89,20 @@ export class ClientRoomController {
     description: 'Users training successfully received.',
   })
   @UseGuards(JwtAuthGuard, RoleClientGuard)
+  @Get('balance')
+  public async getBalance(@Req() { user: payload }: IRequestWithTokenPayload) {
+    const userBalance = await this.clientRoomService.showAllBalance(
+      payload.sub,
+    );
+    return fillObject(BalanceRdo, userBalance);
+  }
+
+  @ApiResponse({
+    type: UserRdo,
+    status: HttpStatus.OK,
+    description: 'Users training successfully received.',
+  })
+  @UseGuards(JwtAuthGuard, RoleClientGuard)
   @Get('balance-training/:id')
   public async checkTraining(
     @Param('id') id: number,
@@ -145,5 +160,39 @@ export class ClientRoomController {
       payload,
     );
     return fillObject(TrainingRdo, trainings);
+  }
+
+  @UseGuards(JwtAuthGuard, RoleClientGuard)
+  @ApiResponse({
+    type: SubscriberRdo,
+    status: HttpStatus.OK,
+    description: 'Subscribe to the trainer.',
+  })
+  @Post('/subscribe/:id')
+  public async subscribe(
+    @Param('id') id: number,
+    @Req() { user: payload }: IRequestWithTokenPayload,
+  ) {
+    const { name, email } = payload;
+    await this.clientRoomService.subscribe({ trainerId: id, name, email });
+
+    return fillObject(SubscriberRdo, { trainerId: id, name, email });
+  }
+
+  @UseGuards(JwtAuthGuard, RoleClientGuard)
+  @ApiResponse({
+    type: SubscriberRdo,
+    status: HttpStatus.OK,
+    description: 'Unsubscribe to the trainer.',
+  })
+  @Delete('/unsubscribe/:id')
+  public async unsubscribe(
+    @Param('id') id: number,
+    @Req() { user: payload }: IRequestWithTokenPayload,
+  ) {
+    const { name, email } = payload;
+    await this.clientRoomService.unsubscribe({ name, email, trainerId: id });
+
+    return 'Unsubscribe to the trainer.';
   }
 }
