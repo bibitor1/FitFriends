@@ -11,7 +11,7 @@ Content-Type: text/plain
 ###
 
 # Get file by ID
-GET http://localhost:4000/static/test.txt HTTP/1.1
+GET http://localhost:4000/static/avatar.jpg HTTP/1.1
 
 
 ###

@@ -16,7 +16,7 @@ import { RoleClientGuard } from '../auth/guards/role-client.guard';
 import { ClientRoomService } from './client-room.service';
 import { IRequestWithTokenPayload } from '@fit-friends/types';
 import { fillObject } from '@fit-friends/core';
-import { FriendRdo } from './rdo/Friend.rdo';
+import { FriendRdo } from './rdo/friend.rdo';
 import { BalanceRdo } from './rdo/balance.rdo';
 import { OrderRdo } from '../order/rdo/order.rdo';
 import { CreateOrderDto } from './dto/create-order.dto';
@@ -156,9 +156,8 @@ export class ClientRoomController {
   public async getRecomendationTraining(
     @Req() { user: payload }: IRequestWithTokenPayload,
   ) {
-    const trainings = await this.clientRoomService.createRecomandationList(
-      payload,
-    );
+    const trainings =
+      await this.clientRoomService.createRecomandationList(payload);
     return fillObject(TrainingRdo, trainings);
   }
 
