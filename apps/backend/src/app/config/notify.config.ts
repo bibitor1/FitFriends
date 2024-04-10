@@ -1,9 +1,6 @@
 import { registerAs } from '@nestjs/config';
+import { DefaultPorts } from '@fit-friends/types';
 import * as Joi from 'joi';
-
-const DEFAULT_PORT = 4000;
-const DEFAULT_POSTGRES_PORT = 5432;
-const DEFAULT_SMTP_PORT = 25;
 
 export interface NotifyConfig {
   environment: string;
@@ -29,11 +26,12 @@ export interface NotifyConfig {
 export default registerAs('application', (): NotifyConfig => {
   const config: NotifyConfig = {
     environment: process.env.NODE_ENV,
-    port: parseInt(process.env.PORT || DEFAULT_PORT.toString(), 10),
+    port: parseInt(process.env.PORT || DefaultPorts.DefaultPort.toString(), 10),
     db: {
       host: process.env.POSTGRES_HOST,
       port: parseInt(
-        process.env.POSTGRES_PORT ?? DEFAULT_POSTGRES_PORT.toString(),
+        process.env.POSTGRES_PORT ??
+          DefaultPorts.DefaultPostgresPort.toString(),
         10,
       ),
       name: process.env.POSTGRES_DB,
@@ -45,7 +43,7 @@ export default registerAs('application', (): NotifyConfig => {
     mail: {
       host: process.env.MAIL_SMTP_HOST,
       port: parseInt(
-        process.env.MAIL_SMTP_PORT ?? DEFAULT_SMTP_PORT.toString(),
+        process.env.MAIL_SMTP_PORT ?? DefaultPorts.DefaultSmtpPort.toString(),
         10,
       ),
       user: process.env.MAIL_USER_NAME,
@@ -56,7 +54,7 @@ export default registerAs('application', (): NotifyConfig => {
 
   const validationSchema = Joi.object<NotifyConfig>({
     environment: Joi.string().valid('development', 'production', 'stage'),
-    port: Joi.number().port().default(DEFAULT_PORT),
+    port: Joi.number().port().default(DefaultPorts.DefaultPort),
     db: Joi.object({
       host: Joi.string().valid().hostname(),
       port: Joi.number().port(),
@@ -68,7 +66,7 @@ export default registerAs('application', (): NotifyConfig => {
     }),
     mail: Joi.object({
       host: Joi.string().valid().hostname().required(),
-      port: Joi.number().port().default(DEFAULT_SMTP_PORT),
+      port: Joi.number().port().default(DefaultPorts.DefaultSmtpPort),
       user: Joi.string().required(),
       password: Joi.string().required(),
       from: Joi.string().required(),

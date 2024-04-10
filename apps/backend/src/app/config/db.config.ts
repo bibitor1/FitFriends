@@ -2,8 +2,7 @@ import { registerAs } from '@nestjs/config';
 import { validateSync } from 'class-validator';
 import { DatabaseEnvironment } from './db-environment';
 import { plainToInstance } from 'class-transformer';
-
-const DEFAULT_POSTGRES_PORT = 5432;
+import { DefaultPorts } from '@fit-friends/types';
 
 export interface DbConfig {
   name: string;
@@ -20,7 +19,8 @@ export default registerAs('db', (): DbConfig => {
     password: process.env['POSTGRES_PASSWORD'] ?? 'test',
     name: process.env['POSTGRES_DB'] ?? 'fitfriends',
     port: parseInt(
-      process.env['POSTGRES_PORT '] ?? DEFAULT_POSTGRES_PORT.toString(),
+      process.env['POSTGRES_PORT '] ??
+        DefaultPorts.DefaultPostgresPort.toString(),
       10,
     ),
     pgAdminEmail:

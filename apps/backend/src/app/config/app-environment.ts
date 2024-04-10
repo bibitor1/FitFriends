@@ -1,7 +1,5 @@
 import { IsNumber, IsString, Max, Min } from 'class-validator';
-
-const MIN_PORT = 0;
-const MAX_PORT = 65535;
+import { PortRange } from '@fit-friends/types';
 
 export enum EnvValidationMessage {
   EnvironmentRequired = 'environment is required',
@@ -13,13 +11,13 @@ export enum EnvValidationMessage {
 
 export class AppEnvironment {
   @IsNumber(
-    { maxDecimalPlaces: MAX_PORT },
+    { maxDecimalPlaces: PortRange.MaxPort },
     {
       message: EnvValidationMessage.PortRequired,
     },
   )
-  @Min(MIN_PORT)
-  @Max(MAX_PORT)
+  @Min(PortRange.MinPort)
+  @Max(PortRange.MaxPort)
   public port: number;
 
   @IsString({
