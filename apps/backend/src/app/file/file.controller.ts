@@ -1,8 +1,6 @@
 import {
   Controller,
   Get,
-  HttpException,
-  HttpStatus,
   Param,
   Post,
   UploadedFile,
@@ -10,12 +8,6 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ConfigService } from '@nestjs/config';
-import {
-  ImageTypes,
-  MAX_AVATAR_FILE_SIZE,
-  VideoTypes,
-  FileError,
-} from '@fit-friends/types';
 import { FileService } from './file.service';
 import { fillObject } from '@fit-friends/core';
 import { UploadedFileRdo } from './rdo/uploaded-file.rdo';
@@ -32,64 +24,19 @@ export class FileController {
   @Post('/upload/video')
   @UseInterceptors(FileInterceptor('file'))
   public async uploadVideoFile(@UploadedFile() file: Express.Multer.File) {
-    const fileType = file.originalname.slice(
-      file.originalname.lastIndexOf('.') + 1,
-    );
-    if (!VideoTypes.includes(fileType)) {
-      throw new HttpException(
-        { status: HttpStatus.NOT_ACCEPTABLE, error: FileError.WrongFileType },
-        HttpStatus.NOT_ACCEPTABLE,
-      );
-    }
-    const newFile = await this.fileService.saveFile(file);
-    const path = `${this.configService.get('application.serveRoot')}${
-      newFile.path
-    }`;
-    return fillObject(UploadedFileRdo, Object.assign(newFile, { path }));
+    return await this.fileService.saveAndReturnPath(file, 'video');
   }
 
   @Post('/upload/img')
   @UseInterceptors(FileInterceptor('file'))
   public async uploadImageFile(@UploadedFile() file: Express.Multer.File) {
-    const fileType = file.originalname.slice(
-      file.originalname.lastIndexOf('.') + 1,
-    );
-    if (file.size > MAX_AVATAR_FILE_SIZE) {
-      throw new HttpException(
-        { status: HttpStatus.NOT_ACCEPTABLE, error: FileError.TooBigFile },
-        HttpStatus.NOT_ACCEPTABLE,
-      );
-    }
-    if (!ImageTypes.includes(fileType)) {
-      throw new HttpException(
-        { status: HttpStatus.NOT_ACCEPTABLE, error: FileError.WrongFileType },
-        HttpStatus.NOT_ACCEPTABLE,
-      );
-    }
-    const newFile = await this.fileService.saveFile(file);
-    const path = `${this.configService.get('application.serveRoot')}${
-      newFile.path
-    }`;
-    return fillObject(UploadedFileRdo, Object.assign(newFile, { path }));
+    return await this.fileService.saveAndReturnPath(file, 'image');
   }
+
   @Post('/upload/pdf')
   @UseInterceptors(FileInterceptor('file'))
   public async uploadPDFile(@UploadedFile() file: Express.Multer.File) {
-    const fileType = file.originalname.slice(
-      file.originalname.lastIndexOf('.') + 1,
-    );
-
-    if (!(fileType === 'pdf')) {
-      throw new HttpException(
-        { status: HttpStatus.NOT_ACCEPTABLE, error: FileError.WrongFileType },
-        HttpStatus.NOT_ACCEPTABLE,
-      );
-    }
-    const newFile = await this.fileService.saveFile(file);
-    const path = `${this.configService.get('application.serveRoot')}${
-      newFile.path
-    }`;
-    return fillObject(UploadedFileRdo, Object.assign(newFile, { path }));
+    return await this.fileService.saveAndReturnPath(file, 'pdf');
   }
 
   @Get(':fileId')

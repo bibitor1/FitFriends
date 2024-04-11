@@ -1,5 +1,10 @@
 import 'multer';
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ensureDir } from 'fs-extra';
 import dayjs from 'dayjs';
@@ -8,6 +13,9 @@ import * as crypto from 'node:crypto';
 import { extension } from 'mime-types';
 import { FileEntity } from './file.entity';
 import { FileRepository } from './file.repository';
+import { ImageTypes, VideoTypes, FileError } from '@fit-friends/types';
+import { UploadedFileRdo } from './rdo/uploaded-file.rdo';
+import { fillObject } from '@fit-friends/core';
 
 type WritedFile = {
   hashName: string;
@@ -23,7 +31,35 @@ export class FileService {
     private readonly configService: ConfigService,
   ) {}
 
-  public async writeFile(file: Express.Multer.File): Promise<WritedFile> {
+  async saveAndReturnPath(file: Express.Multer.File, fileType: string) {
+    const allowedTypes =
+      fileType === 'image'
+        ? ImageTypes
+        : fileType === 'video'
+        ? VideoTypes
+        : ['pdf'];
+
+    const fileTypeExt =
+      fileType === 'pdf'
+        ? 'pdf'
+        : file.originalname.slice(file.originalname.lastIndexOf('.') + 1);
+
+    if (!allowedTypes.includes(fileTypeExt)) {
+      throw new HttpException(
+        { status: HttpStatus.NOT_ACCEPTABLE, error: FileError.WrongFileType },
+        HttpStatus.NOT_ACCEPTABLE,
+      );
+    }
+
+    const writedFile = await this.writeFile(file);
+    const path = `${this.configService.get('application.serveRoot')}${
+      writedFile.path
+    }`;
+
+    return fillObject(UploadedFileRdo, Object.assign(writedFile, { path }));
+  }
+
+  private async writeFile(file: Express.Multer.File): Promise<WritedFile> {
     const [year, month] = dayjs().format('YYYY MM').split(' ');
 
     const uploadDirectory = this.configService.get(
