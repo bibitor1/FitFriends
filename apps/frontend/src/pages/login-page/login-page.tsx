@@ -1,22 +1,28 @@
-import { useAppDispatch } from '../redux/store';
-import { loginUserAction } from '../redux/authSlice/apiAuthActions';
+import { useAppDispatch, useAppSelector } from '../../redux/store';
+import { loginUserAction } from '../../redux/authSlice/apiAuthActions';
 import { z } from 'zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect } from 'react';
+import { UserPasswordLength, UserRole } from '@fit-friends/types';
+import { getIsAuth, getUserRole } from '../../redux/authSlice/selectors';
+import { useNavigate } from 'react-router-dom';
+import { AppRoute } from '../../const';
+import { LogoBig, LogoType } from '../../helper/svg-const';
 
 const formSchema = z.object({
-  email: z.string().email('Некорректный email'),
+  email: z.string().email('Некорректный email').toLowerCase(),
   password: z
     .string()
-    .min(6, 'Пароль слишком короткий')
-    .max(32, 'Пароль слишком длинный'),
+    .min(UserPasswordLength.Min, 'Пароль слишком короткий')
+    .max(UserPasswordLength.Max, 'Пароль слишком длинный'),
 });
 
 type FormSchema = z.infer<typeof formSchema>;
 
 function LoginPage(): JSX.Element {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
 
   const {
     register,
@@ -27,19 +33,25 @@ function LoginPage(): JSX.Element {
   } = useForm<FormSchema>({ resolver: zodResolver(formSchema) });
 
   const onSubmit: SubmitHandler<FormSchema> = (data) => {
-    console.log(data);
-    dispatch(
-      loginUserAction({
-        email: data.email,
-        password: data.password,
-      }),
-    );
+    dispatch(loginUserAction(data));
     reset();
   };
 
   useEffect(() => {
     setFocus('email');
-  }, []);
+  }, [setFocus]);
+
+  const isAuth = useAppSelector(getIsAuth);
+  const role = useAppSelector(getUserRole);
+  console.log(role, ' ', isAuth);
+
+  useEffect(() => {
+    if (role === UserRole.Trainer && isAuth) {
+      navigate(AppRoute.TrainerRoom);
+    } else if (role === UserRole.Client && isAuth) {
+      setTimeout(() => navigate(AppRoute.Main), 100);
+    }
+  }, [role, isAuth, navigate]);
 
   return (
     <main>
@@ -50,7 +62,7 @@ function LoginPage(): JSX.Element {
           height="284"
           aria-hidden="true"
         >
-          <use xlinkHref="#logo-big"></use>
+          <LogoBig />
         </svg>
         <svg
           className="background-logo__icon"
@@ -58,7 +70,7 @@ function LoginPage(): JSX.Element {
           height="343"
           aria-hidden="true"
         >
-          <use xlinkHref="#icon-logotype"></use>
+          <LogoType />
         </svg>
       </div>
       <div className="popup-form popup-form--sign-in">

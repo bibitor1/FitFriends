@@ -1,37 +1,27 @@
 import axios, {
   AxiosError,
-  AxiosInstance,
-  AxiosRequestConfig,
   AxiosResponse,
+  InternalAxiosRequestConfig,
 } from 'axios';
-import { getAccessToken, getRefreshToken } from './tokens';
-import { StatusCodes } from 'http-status-codes';
-import { toast } from 'react-toastify';
-import { redirect } from 'react-router-dom';
-import { AppRoute } from '../const';
-import { store } from '../redux/store';
-import { refreshTokensAction } from '../redux/authSlice/apiAuthActions';
 
-const StatusCodeMapping: Record<number, boolean> = {
-  [StatusCodes.FORBIDDEN]: true,
-  [StatusCodes.BAD_REQUEST]: true,
-  [StatusCodes.NOT_FOUND]: true,
-};
-
-const shouldDisplayError = (response: AxiosResponse) =>
-  !!StatusCodeMapping[response.status];
+import { dropTokens, getToken, saveTokens } from './tokens';
+import { Tokens } from '../types/tokens';
 
 const REQUEST_TIMEOUT = 5000;
+const BASE_URL = 'http://localhost:4000/api';
 
-export const createRefreshTokensAPI = (): AxiosInstance => {
+export const createAPI = () => {
   const api = axios.create({
+    baseURL: BASE_URL,
     timeout: REQUEST_TIMEOUT,
   });
 
-  api.interceptors.request.use((config: AxiosRequestConfig) => {
-    const token = getRefreshToken();
+  api.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+    const token = getToken();
 
-    if (token && config.headers) {
+    config.headers = config.headers ?? {};
+
+    if (token) {
       config.headers['Authorization'] = `Bearer ${token}`;
     }
 
@@ -39,66 +29,29 @@ export const createRefreshTokensAPI = (): AxiosInstance => {
   });
 
   api.interceptors.response.use(
-    (response) => response,
-    (error: AxiosError) => {
-      if (error.response?.status === 401) {
-        toast.warn(error.response.statusText, {
-          position: 'top-right',
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: 'colored',
-        });
+    (response: AxiosResponse) => response,
 
-        redirect(AppRoute.Intro);
+    async (error: AxiosError) => {
+      const { response } = error;
+      const originalRequest = response?.config as InternalAxiosRequestConfig & {
+        _retry: boolean;
+      };
+
+      if (response?.status !== 401 || originalRequest._retry) {
+        return Promise.reject(error);
       }
 
-      throw error;
-    },
-  );
+      try {
+        dropTokens();
+        const { data } = await api.get<Tokens>('/auth/refresh');
+        saveTokens(data.access_token, data.refresh_token);
 
-  return api;
-};
+        originalRequest._retry = true;
 
-export const createAPI = (): AxiosInstance => {
-  const api = axios.create({
-    timeout: REQUEST_TIMEOUT,
-  });
-
-  api.interceptors.request.use((config: AxiosRequestConfig) => {
-    const token = getAccessToken();
-
-    if (token && config.headers) {
-      config.headers['Authorization'] = `Bearer ${token}`;
-    }
-
-    return config;
-  });
-
-  api.interceptors.response.use(
-    (response) => response,
-    (error: AxiosError) => {
-      if (error.response && shouldDisplayError(error.response)) {
-        toast.warn(error.response.statusText, {
-          position: 'top-right',
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-          theme: 'colored',
-        });
+        return api(originalRequest);
+      } catch {
+        return Promise.reject(new Error('Текущая сессия истекла.'));
       }
-
-      if (error.response?.status === 401) {
-        store.dispatch(refreshTokensAction());
-      }
-
-      throw error;
     },
   );
 

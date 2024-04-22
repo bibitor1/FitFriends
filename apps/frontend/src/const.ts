@@ -1,10 +1,12 @@
-export const BASE_URL = 'http//localhost:4000/api';
+export const BASE_RESPONSE_URL = 'http//localhost:4000/api';
 
 export enum AppRoute {
-  Root = '/',
-  Intro = '/intro',
+  Intro = '/',
   Login = '/login',
   Main = '/main',
+  TrainerRoom = '/trainer-room',
+  ClientRoom = '/client-room',
+  Info = '/info',
   Register = '/register',
   CreateTraining = '/create-training',
   MyTrainings = '/my-trainings',
@@ -47,3 +49,18 @@ export enum APIRoute {
   RecommendedTrainings = '/trainings/recommended',
   Orders = '/orders/trainings',
 }
+
+export const LOCATIONS_ZOD = [
+  'Пионерская',
+  'Петроградская',
+  'Удельная',
+  'Звёздная',
+  'Спортивная',
+] as const;
+
+export const GENDER_ZOD = ['мужской', 'женский', 'неважно'] as const;
+export const ROLE_ZOD = ['тренер', 'пользователь'] as const;
+
+export const AVATAR_FILE_TYPES = ['jpg', 'png', 'jpeg'] as const;
+
+export const AVATAR_MAX_SIZE = 1000000;
