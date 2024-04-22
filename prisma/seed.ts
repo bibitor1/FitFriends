@@ -107,7 +107,7 @@ async function fiilDb() {
         personalOrders: {
           create: [
             {
-              trainerId: faker.number.int({ min: 1, max: 10000 }),
+              targetId: faker.number.int({ min: 1, max: 10000 }),
               createdAt: faker.date.past({ years: 1 }),
               updateAt: faker.date.past({ years: 1 }),
               orderStatus: faker.helpers.arrayElement([
@@ -117,7 +117,7 @@ async function fiilDb() {
               ]),
             },
             {
-              trainerId: faker.number.int({ min: 1, max: 10000 }),
+              targetId: faker.number.int({ min: 1, max: 10000 }),
               createdAt: faker.date.past({ years: 1 }),
               updateAt: faker.date.past({ years: 1 }),
               orderStatus: faker.helpers.enumValue(OrderStatus),

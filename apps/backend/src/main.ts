@@ -8,7 +8,7 @@ import { AppModule } from './app/app.module';
 const GLOBAL_PREFIX = 'api';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { cors: true });
 
   const config = new DocumentBuilder()
     .setTitle('The «Backend» service')

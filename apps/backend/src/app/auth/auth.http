@@ -1,7 +1,7 @@
 
 @baseUrl = http://localhost:4000/api
-@token = {{login.response.body.$.accessToken}}
-@refreshToken = {{login.response.body.$.refreshToken}}
+@token = {{login.response.body.$.access_token}}
+@refreshToken = {{login.response.body.$.refresh_token}}
 
 
 
