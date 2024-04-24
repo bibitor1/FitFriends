@@ -7,20 +7,25 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Provider } from 'react-redux';
 import { store } from './redux/store';
-import { HelmetProvider } from 'react-helmet-async';
+import { checkUserAction } from './redux/userSlice/apiUserActions';
+import { getToken } from './services/tokens';
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
 );
+
+const token = getToken();
+if (token) {
+  store.dispatch(checkUserAction());
+}
+
 root.render(
   <StrictMode>
-    <BrowserRouter>
-      <HelmetProvider>
-        <Provider store={store}>
-          <ToastContainer limit={1} />
-          <App />
-        </Provider>
-      </HelmetProvider>
-    </BrowserRouter>
+    <Provider store={store}>
+      <BrowserRouter>
+        <App />
+        <ToastContainer limit={1} />
+      </BrowserRouter>
+    </Provider>
   </StrictMode>,
 );

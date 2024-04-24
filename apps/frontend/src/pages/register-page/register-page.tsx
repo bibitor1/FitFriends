@@ -3,13 +3,17 @@ import BackgroundLogo from '../../components/background-logo/background-logo';
 import FormRegister from '../../components/form-register/form-register';
 import { AppRoute } from '../../const';
 import { useAppSelector } from '../../redux/store';
-import { getIsAuth } from '../../redux/authSlice/selectors';
+import { getIsAuth, getIsTrainer } from '../../redux/userSlice/selectors';
 
 function RegisterPage() {
   const isAuth = useAppSelector(getIsAuth);
+  const isTrainer = useAppSelector(getIsTrainer);
 
-  if (isAuth) {
-    return <Navigate to={AppRoute.Main} />;
+  if (isAuth && isTrainer) {
+    return <Navigate to={AppRoute.RegisterTrainer} />;
+  }
+  if (isAuth && !isTrainer) {
+    return <Navigate to={AppRoute.RegisterClient} />;
   }
 
   return (

@@ -39,9 +39,9 @@ export class FileController {
     return await this.fileService.saveAndReturnPath(file, 'pdf');
   }
 
-  @Get(':fileId')
-  public async show(@Param() fileId: number) {
-    const existFile = await this.fileService.getFileById(fileId);
+  @Get(':id')
+  public async show(@Param('id') id: number) {
+    const existFile = await this.fileService.getFileById(id);
     const path = `${this.configService.get('application.serveRoot')}${
       existFile.path
     }`;

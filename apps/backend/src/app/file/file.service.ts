@@ -42,6 +42,8 @@ export class FileService {
     const fileTypeExt =
       fileType === 'pdf'
         ? 'pdf'
+        : fileType === 'jpg' || fileType === 'png' || fileType === 'jpeg'
+        ? fileType
         : file.originalname.slice(file.originalname.lastIndexOf('.') + 1);
 
     if (!allowedTypes.includes(fileTypeExt)) {
@@ -52,7 +54,7 @@ export class FileService {
     }
 
     const writedFile = await this.writeFile(file);
-    const path = `${this.configService.get('application.serveRoot')}${
+    const path = `${this.configService.get<string>('application.serveRoot')}${
       writedFile.path
     }`;
 
@@ -99,11 +101,11 @@ export class FileService {
     return this.fileRepository.create(newFile);
   }
 
-  public async getFileById(fileId: number) {
-    const existFile = await this.fileRepository.findById(fileId);
+  public async getFileById(id: number) {
+    const existFile = await this.fileRepository.findById(id);
 
     if (!existFile) {
-      throw new NotFoundException(`File with ${fileId} not found.`);
+      throw new NotFoundException(`File with ${id} not found.`);
     }
 
     return existFile;

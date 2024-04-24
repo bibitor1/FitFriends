@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Get,
   HttpCode,
   HttpStatus,
   Post,
@@ -16,11 +17,15 @@ import { JwtRefreshGuard } from './guards/jwt-refresh.guard';
 import { IRequestWithTokenPayload, IRequestWithUser } from '@fit-friends/types';
 import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { LocalAuthGuard } from './guards/local-auth.guard';
+import { UserService } from '../user/user.service';
 
 @ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly userService: UserService,
+  ) {}
 
   @ApiResponse({
     type: UserRdo,
@@ -29,7 +34,6 @@ export class AuthController {
   })
   @Post('/register')
   public async create(@Body() dto: CreateUserDto) {
-    console.log(dto);
     const newUser = await this.authService.createUser(dto);
     return this.authService.createUserToken(newUser);
   }
@@ -51,12 +55,12 @@ export class AuthController {
   }
 
   @UseGuards(JwtAuthGuard)
-  @Post('logout')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiResponse({
     status: HttpStatus.NO_CONTENT,
     description: 'User has been successfully logged out.',
   })
+  @Post('logout')
   async logout(@Req() user: IRequestWithUser) {
     return this.authService.logout(user.user.userId);
   }
@@ -78,7 +82,9 @@ export class AuthController {
     description: 'Checkig token availibility',
   })
   @Post('check')
+  @HttpCode(HttpStatus.OK)
   public async checkToken(@Req() { user: payload }: IRequestWithTokenPayload) {
-    return payload;
+    const user = await this.userService.getUser(payload.sub);
+    return this.authService.createUserToken(user);
   }
 }

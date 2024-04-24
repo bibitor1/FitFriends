@@ -23,7 +23,7 @@ export interface NotifyConfig {
   };
 }
 
-export default registerAs('application', (): NotifyConfig => {
+export default registerAs('notify', (): NotifyConfig => {
   const config: NotifyConfig = {
     environment: process.env.NODE_ENV,
     port: parseInt(process.env.PORT || DefaultPorts.DefaultPort.toString(), 10),
