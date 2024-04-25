@@ -22,3 +22,5 @@ up -d`
 6. Выполните команду `npx nx run-many --all --target=lint` для проверки проекта;
 
 7. Выполните команду `npx nx run backend:serve` для запуска проекта.
+
+npx nx run frontend:serve

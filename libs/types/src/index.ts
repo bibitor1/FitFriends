@@ -35,5 +35,3 @@ export * from './lib/subscriber.interface';
 export * from './lib/notify.interface';
 export * from './lib/new-training-info.interface';
 export * from './lib/friend-info.interface';
-export * from './lib/ports.enum';
-export * from './lib/access-error-type.enum'

@@ -1,9 +1,12 @@
 export const BASE_RESPONSE_URL = 'http//localhost:4000/api';
-export const BASE_SERVER_URL = 'http//localhost:4000';
+export const FILE_URL = 'http//localhost:4000';
 export const SERVER_API_URL = 'http//localhost:4000/api';
 
+export const DAYS_IN_A_WEEK = 7;
+
 export enum AppRoute {
-  Intro = '/',
+  Root = '/',
+  Intro = '/intro',
   Login = '/login',
   Main = '/main',
   TrainerRoom = '/trainer-room',
@@ -44,15 +47,23 @@ export enum APIRoute {
   Refresh = '/auth/refresh',
   UpdateUser = '/users/update',
   Users = '/users',
+  Notify = '/notify',
   Friends = '/users/friends',
   Avatar = 'files/upload/img',
-  Certificate = '/users/certificate',
-  DeleteCertificate = '/users/certificate/delete',
+  Certificate = 'files/upload/pdf',
+  DeleteCertificate = 'files/delete/certificate',
   AddFriend = '/users/friends/add',
   RemoveFriend = '/users/friends/remove',
   Trainings = '/trainings',
   RecommendedTrainings = '/trainings/recommended',
   Orders = '/orders/trainings',
+}
+
+export enum SliceStatus {
+  Idle = 'IDLE',
+  Loading = 'LOADING',
+  Rejected = 'REJECTED',
+  Fulfilled = 'FULFILLED',
 }
 
 export const LOCATIONS_ZOD = [

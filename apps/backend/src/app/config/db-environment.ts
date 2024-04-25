@@ -1,5 +1,7 @@
 import { IsNumber, IsString, Max, Min } from 'class-validator';
-import { PortRange } from '@fit-friends/types';
+
+const MIN_PORT = 0;
+const MAX_PORT = 65535;
 
 export enum EnvValidationMessage {
   DBpgAdminEmailRequired = 'pgAdmin email is required',
@@ -22,8 +24,8 @@ export class DatabaseEnvironment {
       message: EnvValidationMessage.DBPortRequired,
     },
   )
-  @Min(PortRange.MinPort)
-  @Max(PortRange.MaxPort)
+  @Min(MIN_PORT)
+  @Max(MAX_PORT)
   public port: number;
 
   @IsString({

@@ -1,14 +1,12 @@
 import { Navigate } from 'react-router-dom';
-import { AppRoute } from '../../const';
+import { AppRoute } from '../../constants';
 
 type PrivateRouteProps = {
   isAuth: boolean;
   children: JSX.Element;
 };
 
-function PrivateRoute(props: PrivateRouteProps): JSX.Element {
-  const { isAuth, children } = props;
-
+function PrivateRoute({ isAuth, children }: PrivateRouteProps): JSX.Element {
   return isAuth ? children : <Navigate to={AppRoute.Intro} />;
 }
 

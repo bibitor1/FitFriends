@@ -18,18 +18,24 @@ import {
   AVATAR_FILE_TYPES,
   AVATAR_MAX_SIZE,
   AppRoute,
-} from '../../const';
+} from '../../constants';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
-import { registerUserAction } from '../../redux/userSlice/apiUserActions';
-import { getIsAuth, getRole } from '../../redux/userSlice/selectors';
+import {
+  registerUserAction,
+  updateUserAction,
+  uploadAvatarAction,
+} from '../../redux/userSlice/apiUserActions';
+import { getAvatar, getIsAuth, getRole } from '../../redux/userSlice/selectors';
 import { useNavigate } from 'react-router-dom';
 import { upFirstWord } from '../../helper/utils';
+import { CreateUserDto } from '../../types/createUserDto';
+import { toast } from 'react-toastify';
+import { isFulfilled } from '@reduxjs/toolkit';
 
 const formSchema = z.object({
-  avatar: z.object({}),
   name: z
     .string()
     .min(UserNameLength.Min, 'Имя слишком короткое')
@@ -58,6 +64,9 @@ type FormSchema = z.infer<typeof formSchema>;
 function FormRegister() {
   const navigate = useNavigate();
   const dispatch = useAppDispatch();
+  const avatarPath = useAppSelector(getAvatar);
+  const isAuth = useAppSelector(getIsAuth);
+  const role = useAppSelector(getRole);
 
   const {
     register,
@@ -68,27 +77,14 @@ function FormRegister() {
     formState: { isDirty, isSubmitting, errors },
   } = useForm<FormSchema>({ resolver: zodResolver(formSchema) });
 
-  const isAuth = useAppSelector(getIsAuth);
-  const role = useAppSelector(getRole);
-
-  const onSubmit: SubmitHandler<FormSchema> = (data) => {
-    dispatch(
-      registerUserAction({
-        ...data,
-        avatar,
-      }),
-    );
-    reset();
-  };
-
   useEffect(() => {
     if (isAuth) {
       switch (role) {
         case UserRole.Trainer:
-          navigate(AppRoute.RegisterTrainer);
+          navigate(AppRoute.TrainerRoom);
           break;
         case UserRole.Client:
-          navigate(AppRoute.RegisterClient);
+          navigate(AppRoute.ClientRoom);
           break;
       }
     }
@@ -100,7 +96,9 @@ function FormRegister() {
 
   const [isSelectOpened, setIsSelectOpened] = useState(false);
   const [avatar, setAvatar] = useState('');
-  const [avatarError, setAvatarError] = useState('');
+  const [fileAvatar, setFileAvatar] = useState<File | null>(null);
+  const [avatarError, setAvatarError] = useState('Обязательное поле');
+  const [avatarInputUsed, setAvatarInputUsed] = useState(false);
 
   const handleAvatarFileInputChange = (evt: ChangeEvent<HTMLInputElement>) => {
     const file = evt.currentTarget.files && evt.currentTarget.files[0];
@@ -111,6 +109,7 @@ function FormRegister() {
 
     if (matches && file) {
       setAvatar(URL.createObjectURL(file));
+      setFileAvatar(file);
 
       setAvatarError('');
     } else if (!matches && file) {
@@ -124,23 +123,77 @@ function FormRegister() {
         `Максимальный размер файла ${AVATAR_MAX_SIZE * 1e-6} Мбайт`,
       );
     }
+    setAvatarInputUsed(true);
   };
+
+  const onSubmit: SubmitHandler<FormSchema> = async (data) => {
+    if (avatarInputUsed && !avatarError) {
+      let newData: CreateUserDto;
+
+      if (data.role === UserRole.Client) {
+        newData = {
+          ...data,
+          client: {
+            timeOfTraining: '',
+            caloryLosingPlanTotal: 0,
+            caloryLosingPlanDaily: 0,
+            isReady: false,
+          },
+        };
+      } else {
+        newData = {
+          ...data,
+          trainer: {
+            isPersonalTraining: false,
+            certificate: [],
+            merits: '',
+          },
+        };
+      }
+
+      const dataRegister = await dispatch(registerUserAction(newData));
+      if (fileAvatar && dataRegister.meta.requestStatus === 'fulfilled') {
+        const formData = new FormData();
+        formData.append('file', fileAvatar);
+        dispatch(uploadAvatarAction(formData))
+          .then(isFulfilled)
+          .catch((error) => {
+            toast.error(error);
+          });
+        reset();
+        if (data.role === UserRole.Client) {
+          navigate(AppRoute.RegisterClient);
+        } else {
+          navigate(AppRoute.RegisterTrainer);
+        }
+      }
+    }
+    setAvatarInputUsed(true);
+  };
+
+  useEffect(() => {
+    if (avatarPath) {
+      dispatch(updateUserAction({ avatar: avatarPath }));
+    }
+  }, [avatarPath, dispatch]);
 
   return (
     <form method="post" onSubmit={handleSubmit(onSubmit)}>
       <div className="sign-up">
-        <div className="sign-up__load-photo">
+        <div
+          className={`sign-up__load-photo ${
+            avatarInputUsed && avatarError ? 'custom-input--error' : ''
+          }`}
+        >
           <div className="input-load-avatar">
             <label>
               <input
-                {...register('avatar')}
                 onChange={handleAvatarFileInputChange}
                 disabled={isSubmitting}
                 className="visually-hidden"
                 type="file"
                 name="avatar"
                 accept="image/png, image/jpeg"
-                aria-invalid={errors.avatar ? 'true' : 'false'}
               />
               <span className="input-load-avatar__btn">
                 {avatar && (
@@ -162,12 +215,9 @@ function FormRegister() {
             <span className="sign-up__text">
               JPG, PNG, оптимальный размер 100&times;100&nbsp;px
             </span>
-            {errors.avatar && (
-              <span role="alert" className="error">
-                {errors.avatar?.message}
-              </span>
-            )}
-            <span className="error">{avatarError}</span>
+            <span className="custom-input__error">
+              {avatarInputUsed && avatarError}
+            </span>
           </div>
         </div>
         <div className="sign-up__data">

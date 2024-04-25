@@ -1,5 +1,5 @@
-import { Link } from 'react-router-dom';
-import Header from '../../components/header/header1';
+import { Link, useNavigate } from 'react-router-dom';
+import Header from '../../components/header/header';
 import {
   ArrowCheck,
   ArrowDown,
@@ -10,7 +10,7 @@ import {
   IconChange,
   IconEdit,
   IconFlash,
-  IconFriend,
+  IconFriends,
   IconImport,
   IconTrash,
 } from '../../helper/svg-const';
@@ -28,24 +28,29 @@ import {
   AVATAR_FILE_TYPES,
   AVATAR_MAX_SIZE,
   AppRoute,
-  BASE_SERVER_URL,
   CERTIFICATE_FILE_TYPES,
   MAX_CERTIFICATES_COUNT_PER_PAGE,
-} from '../../const';
+} from '../../constants';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
-import { getUser } from '../../redux/userSlice/selectors';
+import { getIsAuth, getUser } from '../../redux/userSlice/selectors';
 import {
+  checkUserAction,
   deleteCertificateAction,
   updateUserAction,
   uploadAvatarAction,
   uploadCertificateAction,
 } from '../../redux/userSlice/apiUserActions';
 import CertificateItem from '../../components/certificate-item/certificate-item';
+import { isFulfilled } from '@reduxjs/toolkit';
+import { toast } from 'react-toastify';
+import 'dotenv';
 
 function TrainerRoomPage() {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const user = useAppSelector(getUser);
   const certificates = user?.trainer?.certificate ?? [''];
+  const isAuth = useAppSelector(getIsAuth);
 
   const [isLocationSelectOpened, setIsLocationSelectOpened] = useState(false);
   const [isGenderSelectOpened, setIsGenderSelectOpened] = useState(false);
@@ -57,6 +62,7 @@ function TrainerRoomPage() {
   const [isCertificatesEditable, setIsCertificatesEditable] = useState(false);
   const [editableCertificateItem, setEditableCertificateItem] = useState('');
   const [isContentEditable, setIsContentEditable] = useState(false);
+  const [isUpdateCertificate, setIsUpdateCertificate] = useState(false);
 
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [userName, setUserName] = useState(user?.name ?? '');
@@ -80,6 +86,14 @@ function TrainerRoomPage() {
   });
 
   useEffect(() => {
+    if (isUpdateCertificate && certificates) {
+      dispatch(updateUserAction({ trainer: { certificate: certificates } }));
+      setIsUpdateCertificate(false);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [certificates]);
+
+  useEffect(() => {
     if (
       errors.trainingTypes ||
       errors.name ||
@@ -95,6 +109,7 @@ function TrainerRoomPage() {
 
   function handleSubmitButtonClick(event: FormEvent<HTMLButtonElement>): void {
     event.preventDefault();
+    sendFormData();
     setIsContentEditable(false);
   }
   function handleEditButtonClick(event: FormEvent<HTMLButtonElement>): void {
@@ -172,6 +187,7 @@ function TrainerRoomPage() {
         certificate: 'Загрузите сюда файлы формата PDF, JPG или PNG',
       });
     }
+    setIsUpdateCertificate(true);
   };
 
   function handleLeftArrowButtonClick(): void {
@@ -217,13 +233,20 @@ function TrainerRoomPage() {
             isPersonalTraining,
           },
         }),
-      );
-
-      if (avatarFile) {
-        const formData = new FormData();
-        formData.append('file', avatarFile);
-        dispatch(uploadAvatarAction(formData));
-      }
+      )
+        .then(isFulfilled)
+        .then(() => {
+          if (avatarFile) {
+            const formData = new FormData();
+            formData.append('file', avatarFile);
+            dispatch(uploadAvatarAction(formData)).catch(() => {
+              toast.error('Аватар не загружен');
+            });
+          }
+        })
+        .catch(() => {
+          toast.error('Что-то пошло не так');
+        });
     }
   };
 
@@ -301,6 +324,26 @@ function TrainerRoomPage() {
     setIsLevelSelectOpened((prevState) => !prevState);
   }
 
+  useEffect(() => {
+    if (user) {
+      setUserName(user.name);
+      setDescription(user.description ?? '');
+      setTypesOfTraining(user.typesOfTraining ?? []);
+      setLocation(user.location);
+      setGender(user.gender);
+      setLevel(user.level ?? 'новичок');
+      setIsPersonalTraining(user.trainer?.isPersonalTraining ?? false);
+    } else {
+      dispatch(checkUserAction());
+    }
+  }, [dispatch, user]);
+
+  useEffect(() => {
+    if (!isAuth) {
+      navigate(AppRoute.Intro);
+    }
+  }, [isAuth, navigate]);
+
   return (
     <>
       <Header />
@@ -329,8 +372,12 @@ function TrainerRoomPage() {
                       />
                       <span className="input-load-avatar__avatar">
                         <img
-                          src={`${BASE_SERVER_URL}/${user?.avatar}`}
-                          srcSet={`${BASE_SERVER_URL}/${user?.avatar} 2x`}
+                          src={`${
+                            import.meta.env.VITE_SERVER_URL_FILES
+                          }${user?.avatar}`}
+                          srcSet={`${
+                            import.meta.env.VITE_SERVER_URL_FILES
+                          }${user?.avatar} 2x`}
                           width="98"
                           height="98"
                           alt="user"
@@ -492,6 +539,7 @@ function TrainerRoomPage() {
                           onChange={() =>
                             setIsPersonalTraining((prevState) => !prevState)
                           }
+                          disabled={!isContentEditable}
                           type="checkbox"
                           name="ready-for-training"
                           checked={isPersonalTraining}
@@ -550,11 +598,11 @@ function TrainerRoomPage() {
                               className="visually-hidden"
                               type="checkbox"
                               name="specialisation"
-                              value={itemType.toLowerCase()}
+                              value={itemType}
                               checked={typesOfTraining.includes(itemType)}
                             />
                             <span className="btn-checkbox__btn">
-                              {itemType[1]
+                              {itemType
                                 .split('')
                                 .map((item, index) =>
                                   index === 0 ? item.toUpperCase() : item,
@@ -750,7 +798,7 @@ function TrainerRoomPage() {
                     >
                       <div className="thumbnail-link__icon thumbnail-link__icon--theme-light">
                         <svg width="30" height="26" aria-hidden="true">
-                          <IconFriend />
+                          <IconFriends />
                         </svg>
                       </div>
                       <span className="thumbnail-link__text">Мои друзья</span>

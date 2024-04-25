@@ -7,29 +7,29 @@ POST {{baseUrl}}/auth/login HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "aaaa@gmail.com",
+  "email": "mabori2@gmail.com",
   "password": "12345a"
 }
 ###
 
 # Order personal training
-POST {{baseUrl}}/personal-order/101 HTTP/1.1
+POST {{baseUrl}}/personal-order/306 HTTP/1.1
 Authorization: Bearer {{token}}
 
 ###
 
 # Get personal order
-GET {{baseUrl}}/personal-order/201 HTTP/1.1
+GET {{baseUrl}}/personal-order/615 HTTP/1.1
 Authorization: Bearer {{token}}
 ###
 
 # confirm personal training
-PATCH {{baseUrl}}/personal-order?orderId=201&newStatus=принят HTTP/1.1
+PATCH {{baseUrl}}/personal-order?orderId=615&newStatus=принят HTTP/1.1
 Authorization: Bearer {{token}}
 ###
 
 # Reject the personal training
-PATCH {{baseUrl}}/personal-order?orderId=201&newStatus=отклонён HTTP/1.1
+PATCH {{baseUrl}}/personal-order?orderId=615&newStatus=отклонён HTTP/1.1
 Authorization: Bearer {{token}}
 ###
 

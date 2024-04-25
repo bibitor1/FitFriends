@@ -1,10 +1,16 @@
 import axios, { InternalAxiosRequestConfig } from 'axios';
 import dayjs from 'dayjs';
-import { getAccessToken, getRefreshToken, saveTokens } from './tokens';
+import {
+  dropTokens,
+  getAccessToken,
+  getRefreshToken,
+  saveTokens,
+} from './tokens';
 import { jwtDecode } from 'jwt-decode';
+import 'dotenv';
 
-const REQUEST_TIMEOUT = 2000;
-const BASE_URL = 'http://localhost:4000/api';
+const REQUEST_TIMEOUT = 200;
+const BASE_URL = `${import.meta.env.VITE_SERVER_URL}`;
 
 const token = getAccessToken();
 
@@ -57,6 +63,7 @@ axiosInstance.interceptors.request.use(
             return config;
           } else if (response.status === 401) {
             console.log('refresh token failed');
+            dropTokens();
           }
         }
       }

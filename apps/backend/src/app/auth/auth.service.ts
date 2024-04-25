@@ -8,7 +8,12 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
 import * as crypto from 'node:crypto';
-import { AuthErrorMessage, IUser } from '@fit-friends/types';
+import {
+  AUTH_USER_EXISTS,
+  AUTH_USER_NOT_FOUND,
+  AUTH_USER_PASSWORD_WRONG,
+  IUser,
+} from '@fit-friends/types';
 import { UserRepository } from '../user/user.repository';
 import { UserEntity } from '../user/user.entity';
 import { LoginUserDto } from './dto/login-user.dto';
@@ -37,7 +42,7 @@ export class AuthService {
     const existUser = await this.userRepository.findByEmail(dto.email);
 
     if (existUser) {
-      throw new ConflictException(AuthErrorMessage.UserAlreadyExist);
+      throw new ConflictException(AUTH_USER_EXISTS);
     }
 
     const userEntity = await new UserEntity(newUser).setPassword(dto.password);
@@ -50,14 +55,12 @@ export class AuthService {
     const existUser = await this.userRepository.findByEmail(email);
 
     if (!existUser) {
-      throw new NotFoundException(AuthErrorMessage.UserNotFound);
+      throw new NotFoundException(AUTH_USER_NOT_FOUND);
     }
 
     const userEntity = new UserEntity(existUser);
     if (!(await userEntity.comparePassword(password))) {
-      throw new UnauthorizedException(
-        AuthErrorMessage.UserPasswordOrEmailWrong,
-      );
+      throw new UnauthorizedException(AUTH_USER_PASSWORD_WRONG);
     }
 
     return existUser;

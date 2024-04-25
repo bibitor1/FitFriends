@@ -7,7 +7,7 @@ import { useEffect } from 'react';
 import { UserPasswordLength } from '@fit-friends/types';
 import { getIsAuth, getIsTrainer } from '../../redux/userSlice/selectors';
 import { useNavigate } from 'react-router-dom';
-import { AppRoute } from '../../const';
+import { AppRoute } from '../../constants';
 import { LogoBig, LogoType } from '../../helper/svg-const';
 
 const formSchema = z.object({
@@ -26,7 +26,6 @@ function LoginPage(): JSX.Element {
 
   const isAuth = useAppSelector(getIsAuth);
   const isTrainer = useAppSelector(getIsTrainer);
-  console.log(isAuth);
 
   useEffect(() => {
     if (isTrainer && isAuth) {

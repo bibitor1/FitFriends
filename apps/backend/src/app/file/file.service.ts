@@ -1,10 +1,5 @@
 import 'multer';
-import {
-  Injectable,
-  NotFoundException,
-  HttpException,
-  HttpStatus,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { ensureDir } from 'fs-extra';
 import dayjs from 'dayjs';
@@ -13,9 +8,8 @@ import * as crypto from 'node:crypto';
 import { extension } from 'mime-types';
 import { FileEntity } from './file.entity';
 import { FileRepository } from './file.repository';
-import { ImageTypes, VideoTypes, FileError } from '@fit-friends/types';
-import { UploadedFileRdo } from './rdo/uploaded-file.rdo';
-import { fillObject } from '@fit-friends/core';
+import { UserService } from '../user/user.service';
+import * as fs from 'fs';
 
 type WritedFile = {
   hashName: string;
@@ -29,39 +23,10 @@ export class FileService {
   constructor(
     private readonly fileRepository: FileRepository,
     private readonly configService: ConfigService,
+    private readonly userService: UserService,
   ) {}
 
-  async saveAndReturnPath(file: Express.Multer.File, fileType: string) {
-    const allowedTypes =
-      fileType === 'image'
-        ? ImageTypes
-        : fileType === 'video'
-        ? VideoTypes
-        : ['pdf'];
-
-    const fileTypeExt =
-      fileType === 'pdf'
-        ? 'pdf'
-        : fileType === 'jpg' || fileType === 'png' || fileType === 'jpeg'
-        ? fileType
-        : file.originalname.slice(file.originalname.lastIndexOf('.') + 1);
-
-    if (!allowedTypes.includes(fileTypeExt)) {
-      throw new HttpException(
-        { status: HttpStatus.NOT_ACCEPTABLE, error: FileError.WrongFileType },
-        HttpStatus.NOT_ACCEPTABLE,
-      );
-    }
-
-    const writedFile = await this.writeFile(file);
-    const path = `${this.configService.get<string>('application.serveRoot')}${
-      writedFile.path
-    }`;
-
-    return fillObject(UploadedFileRdo, Object.assign(writedFile, { path }));
-  }
-
-  private async writeFile(file: Express.Multer.File): Promise<WritedFile> {
+  public async writeFile(file: Express.Multer.File): Promise<WritedFile> {
     const [year, month] = dayjs().format('YYYY MM').split(' ');
 
     const uploadDirectory = this.configService.get(
@@ -112,12 +77,50 @@ export class FileService {
   }
 
   public async getFileByHasName(hashName: string) {
-    const existFile = await this.fileRepository.findByHashName(hashName);
+    const existFile = await this.fileRepository
+      .findByHashName(hashName)
+      .catch(() => {
+        throw new NotFoundException(`File with ${hashName} not found.`);
+      });
 
     if (!existFile) {
       throw new NotFoundException(`File with ${hashName} not found.`);
     }
 
     return existFile;
+  }
+
+  public async deleteCertificate(path: string, userId: number) {
+    const newPath = path.replace(
+      `${this.configService.get('application.serveRoot')}`,
+      '',
+    );
+
+    const existFile = await this.fileRepository
+      .findByPath(newPath)
+      .catch(() => {
+        throw new NotFoundException(`File not found.`);
+      });
+
+    if (!existFile) {
+      throw new NotFoundException(`File not found.`);
+    }
+
+    await this.userService.deleteCertificate(userId, path).then(() => {
+      const pathFile = `${this.configService.get(
+        'application.uploadDirectory',
+      )}${existFile.path}`;
+
+      if (fs.existsSync(pathFile)) {
+        fs.unlink(pathFile, (err) => {
+          if (err) {
+            console.error(err);
+            return err;
+          }
+        });
+      }
+    });
+
+    return await this.fileRepository.destroy(existFile.id);
   }
 }

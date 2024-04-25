@@ -7,7 +7,7 @@ POST {{baseUrl}}/auth/login HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "aaaa@gmail.com",
+  "email": "mabori1@gmail.com",
   "password": "12345a"
 }
 ###
@@ -18,7 +18,7 @@ Authorization: Bearer {{token}}
 Content-Type: application/json
 
 {
-  "title": "Побегаем",
+  "title": "Побегаем6!",
   "backgroundPicture": "bg-image1.jpg" ,
   "levelOfUser": "любитель",
   "typeOfTraining": "бег",
@@ -35,7 +35,7 @@ Content-Type: application/json
 
 # Update training by ID
 
-PATCH  {{baseUrl}}/trainer/update/102 HTTP/1.1
+PATCH  {{baseUrl}}/trainer/update/2 HTTP/1.1
 Authorization: Bearer {{token}}
 Content-Type: application/json
 
@@ -47,7 +47,7 @@ Content-Type: application/json
 
 #Get training by ID
 
-GET {{baseUrl}}/trainer/training/102 HTTP/1.1
+GET {{baseUrl}}/trainer/training/211 HTTP/1.1
 Authorization: Bearer {{token}}
 ###
 

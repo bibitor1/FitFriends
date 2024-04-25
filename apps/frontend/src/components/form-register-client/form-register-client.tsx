@@ -5,7 +5,7 @@ import {
   DURATION_TRAINING_ZOD,
   LEVEL_TRAINING_ZOD,
   TYPE_TRAINING_ZOD,
-} from '../../const';
+} from '../../constants';
 import {
   CaloriesOfDay,
   CaloriesOfTotal,
@@ -13,9 +13,14 @@ import {
 } from '@fit-friends/types';
 import { upFirstWord } from '../../helper/utils';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useAppDispatch } from '../../redux/store';
+import { useAppDispatch, useAppSelector } from '../../redux/store';
 import { updateUserAction } from '../../redux/userSlice/apiUserActions';
 import { useNavigate } from 'react-router-dom';
+import { UpdateUserDto } from '../../types/updateUserDto';
+import { toast } from 'react-toastify';
+import { isFulfilled } from '@reduxjs/toolkit';
+import { useEffect } from 'react';
+import { getUser } from '../../redux/userSlice/selectors';
 
 const formSchema = z.object({
   typesOfTraining: z
@@ -40,6 +45,14 @@ function FormRegisgerClient() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
 
+  const user = useAppSelector(getUser);
+
+  useEffect(() => {
+    if (!user?.name) {
+      navigate(AppRoute.Register);
+    }
+  }, [user, navigate]);
+
   const {
     register,
     handleSubmit,
@@ -49,19 +62,24 @@ function FormRegisgerClient() {
   } = useForm<FormSchema>({ resolver: zodResolver(formSchema) });
 
   const onSubmit: SubmitHandler<FormSchema> = (data) => {
-    console.log(data);
-    const updateData = {
+    const updateData: UpdateUserDto = {
       level: data.level,
       typesOfTraining: data.typesOfTraining,
-      Client: {
+      client: {
         timeOfTraining: data.timeOfTraining,
         caloryLosingPlanTotal: data.caloryLosingPlanTotal,
         caloryLosingPlanDaily: data.caloryLosingPlanDaily,
       },
     };
-    dispatch(updateUserAction(updateData));
-    reset();
-    navigate(AppRoute.ClientRoom);
+    dispatch(updateUserAction(updateData))
+      .then(isFulfilled)
+      .then(() => {
+        reset();
+        navigate(AppRoute.ClientRoom);
+      })
+      .catch(() => {
+        toast.error('Что-то пошло не так');
+      });
   };
 
   return (

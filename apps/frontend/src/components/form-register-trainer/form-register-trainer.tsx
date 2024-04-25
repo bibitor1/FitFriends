@@ -1,23 +1,30 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { z } from 'zod';
 import { useForm, SubmitHandler } from 'react-hook-form';
 import {
   LEVEL_TRAINING_ZOD,
   TYPE_TRAINING_ZOD,
   CERTIFICATE_FILE_TYPES,
-} from '../../const';
+} from '../../constants';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { ArrowCheck, IconImport } from '../../helper/svg-const';
 import BackgroundLogo from '../background-logo/background-logo';
 import { upFirstWord } from '../../helper/utils';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import {
   MAXIMUM_TRAINING_TYPES_CHOICE,
   TrainerMeritLength,
 } from '@fit-friends/types';
-import { useAppDispatch } from '../../redux/store';
-import { updateUserAction } from '../../redux/userSlice/apiUserActions';
+import { useAppDispatch, useAppSelector } from '../../redux/store';
+import {
+  updateUserAction,
+  uploadCertificateAction,
+} from '../../redux/userSlice/apiUserActions';
 import { useNavigate } from 'react-router-dom';
-import { AppRoute } from '../../const';
+import { AppRoute } from '../../constants';
+import { isFulfilled } from '@reduxjs/toolkit';
+import { toast } from 'react-toastify';
+import { getUser } from '../../redux/userSlice/selectors';
 
 const formSchema = z.object({
   typesOfTraining: z
@@ -43,6 +50,13 @@ type FormSchema = z.infer<typeof formSchema>;
 function FormRegisgerTrainer() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const user = useAppSelector(getUser);
+
+  useEffect(() => {
+    if (!user?.name) {
+      navigate(AppRoute.Register);
+    }
+  }, [user, navigate]);
 
   const {
     register,
@@ -53,28 +67,50 @@ function FormRegisgerTrainer() {
   } = useForm<FormSchema>({ resolver: zodResolver(formSchema) });
 
   const [certificate, setCertificate] = useState<File | null>(null);
-  const [imageInputUsed, setImageInputUsed] = useState(false);
+  const [certificateInputUsed, setCertificateInputUsed] = useState(false);
   const [certificateError, setCertificateError] = useState(
-    'Добавьте подтверждающий документ',
+    'Должен быть хотя бы один документ',
   );
   const [certificateName, setCertificateName] = useState([
     'Загрузите сюда файлы формата PDF, JPG или PNG',
   ]);
 
   const onSubmit: SubmitHandler<FormSchema> = (data) => {
-    setImageInputUsed(true);
-    const updateData = {
-      level: data.level,
-      typesOfTraining: data.typesOfTraining,
-      trainer: {
-        merits: data.merits,
-        isPersonalTraining: data.isPersonalTraining,
-        certificate: certificateName,
-      },
-    };
-    dispatch(updateUserAction(updateData));
-    reset();
-    navigate(AppRoute.TrainerRoom);
+    if (!certificateError && certificateInputUsed) {
+      const updateData = {
+        level: data.level,
+        typesOfTraining: data.typesOfTraining,
+        trainer: {
+          merits: data.merits,
+          isPersonalTraining: data.isPersonalTraining,
+          certificate: [],
+        },
+      };
+
+      dispatch(updateUserAction(updateData))
+        .then(isFulfilled)
+        .then(() => {
+          if (certificate) {
+            const formData = new FormData();
+            formData.append('file', certificate);
+            dispatch(uploadCertificateAction(formData)).then((data: any) => {
+              dispatch(
+                updateUserAction({
+                  trainer: {
+                    certificate: [data.payload?.path],
+                  },
+                }),
+              );
+            });
+          }
+          reset();
+          navigate(AppRoute.TrainerRoom);
+        })
+        .catch(() => {
+          toast.error('Что-то пошло не так');
+        });
+    }
+    setCertificateInputUsed(true);
   };
 
   const handleCertificateFileInputChange = (
@@ -96,6 +132,7 @@ function FormRegisgerTrainer() {
     } else {
       setCertificateError('Добавьте подтверждающий документ');
     }
+    setCertificateInputUsed(true);
   };
 
   return (
@@ -179,7 +216,7 @@ function FormRegisgerTrainer() {
                       <div className="drag-and-drop questionnaire-coach__drag-and-drop">
                         <label
                           className={`${
-                            imageInputUsed && certificateError
+                            certificateInputUsed && certificateError
                               ? 'custom-input--error'
                               : ''
                           }`}

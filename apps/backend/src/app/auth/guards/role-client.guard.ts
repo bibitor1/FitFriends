@@ -1,4 +1,4 @@
-import { AccessErrorType, UserRole } from '@fit-friends/types';
+import { UserRole } from '@fit-friends/types';
 import {
   Injectable,
   CanActivate,
@@ -13,7 +13,7 @@ export class RoleClientGuard implements CanActivate {
     const userRole = request.user.role;
 
     if (userRole !== UserRole.Client) {
-      throw new ForbiddenException(AccessErrorType.TrainerAccessDenied);
+      throw new ForbiddenException('Тренерам здесь доступ запрещен');
     }
 
     return true;

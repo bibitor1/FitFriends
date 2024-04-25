@@ -1,6 +1,6 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { UserResponse } from '../../types/userResponse';
-import { APIRoute } from '../../const';
+import { APIRoute } from '../../constants';
 import { CreateUserDto } from '../../types/createUserDto';
 import { dropTokens, saveTokens } from '../../services/tokens';
 import { LoginUserDto } from '../../types/loginUserDto';
@@ -8,6 +8,8 @@ import { AsyncThunkConfig } from '../../types/asyncThunkConfig';
 import { isAxiosError } from 'axios';
 import { toast } from 'react-toastify';
 import { UpdateUserDto } from '../../types/updateUserDto';
+import { UploadedFileRdo } from '../../types/uploadedFilesRdo';
+import { INotify } from '@fit-friends/types';
 
 export const registerUserAction = createAsyncThunk<
   UserResponse | undefined,
@@ -53,7 +55,7 @@ export const loginUserAction = createAsyncThunk<
 
 export const logoutAction = createAsyncThunk<void, undefined, AsyncThunkConfig>(
   'user/logout',
-  async (loginUserDto, { extra: api }) => {
+  async (_, { extra: api }) => {
     try {
       await api.post<void>(APIRoute.Logout);
       toast.success('Вы успешно вышли!');
@@ -111,29 +113,52 @@ export const updateUserAction = createAsyncThunk<
 });
 
 export const uploadAvatarAction = createAsyncThunk<
-  UserResponse,
+  UploadedFileRdo,
   FormData,
   AsyncThunkConfig
->('user/avatar', async (avatar, { dispatch, extra: api }) => {
-  const { data } = await api.post<UserResponse>(APIRoute.Avatar, avatar);
-  console.log(data);
+>('user/uploadAvatar', async (avatar, { extra: api }) => {
+  const { data } = await api.post<UploadedFileRdo>(APIRoute.Avatar, avatar);
+
   return data;
 });
 
 export const uploadCertificateAction = createAsyncThunk<
-  UserResponse,
+  UploadedFileRdo,
   FormData,
   AsyncThunkConfig
->('user/certificate', async (avatar, { dispatch, extra: api }) => {
-  const { data } = await api.post<UserResponse>(APIRoute.Avatar, avatar);
+>('user/uploadCertificate', async (certificat, { extra: api }) => {
+  const { data } = await api.post<UploadedFileRdo>(
+    APIRoute.Certificate,
+    certificat,
+  );
   return data;
 });
 
 export const deleteCertificateAction = createAsyncThunk<
-  UserResponse,
+  undefined,
   string,
   AsyncThunkConfig
->('user/certificate', async (avatar, { dispatch, extra: api }) => {
-  const { data } = await api.post<UserResponse>(APIRoute.Avatar, avatar);
+>('user/deleteCertificate', async (certificateUrl, { extra: api }) => {
+  const { data } = await api.delete<undefined>(
+    `${APIRoute.DeleteCertificate}/?certificateUrl=${certificateUrl}`,
+  );
+  return data;
+});
+
+export const fetchNotifyAction = createAsyncThunk<
+  INotify[],
+  undefined,
+  AsyncThunkConfig
+>('user/getNotify', async (_arg, { extra: api }) => {
+  const { data } = await api.get<INotify[]>(APIRoute.Notify);
+  return data;
+});
+
+export const deleteNotifyAction = createAsyncThunk<
+  undefined,
+  number,
+  AsyncThunkConfig
+>('user/deleteNotify', async (id, { extra: api }) => {
+  const { data } = await api.delete(`${APIRoute.Notify}/${id}`);
   return data;
 });

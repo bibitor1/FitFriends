@@ -4,12 +4,16 @@ import { UpdateUserDto } from '../auth/dto/update-user.dto';
 import { UserQuery } from './query/user.query';
 import { UserEntity } from './user.entity';
 import { UserRepository } from './user.repository';
+import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class UserService {
   private readonly logger = new Logger(UserService.name);
 
-  constructor(private readonly userRepository: UserRepository) {}
+  constructor(
+    private readonly userRepository: UserRepository,
+    private readonly prisma: PrismaService,
+  ) {}
 
   public async getUser(id: number) {
     const user = await this.userRepository.findById(id).catch((err) => {
@@ -54,5 +58,31 @@ export class UserService {
 
       return await this.userRepository.update(id, userEntity);
     }
+  }
+
+  public async deleteCertificate(userId: number, path: string) {
+    const user = await this.userRepository.findById(userId).catch((err) => {
+      this.logger.error(err);
+      throw new NotFoundException('User not found');
+    });
+
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+
+    const oldCertificates = user.trainer.certificate;
+    const newCertificates = oldCertificates.filter((el) => el !== path);
+    await this.prisma.user.update({
+      where: {
+        userId,
+      },
+      data: {
+        trainer: {
+          update: {
+            certificate: newCertificates,
+          },
+        },
+      },
+    });
   }
 }
