@@ -13,12 +13,16 @@ import {
   getIsTrainer,
   getIsUserLoading,
 } from './redux/userSlice/selectors';
-import LoadingPage from './pages/loading-page/loading-page';
 import PrivateRoute from './components/private-route/private-route';
-import { RoleRoutePage } from './pages/role-route/role-route';
 import FormRegisterTrainer from './components/form-register-trainer/form-register-trainer';
 import FormRegisterClient from './components/form-register-client/form-register-client';
 import CreateTrainingPage from './pages/create-training-page/create-training-page';
+import TrainerTrainingsPage from './pages/trainer-trainings-page/trainer-trainings-page';
+import TrainerOrdersPage from './pages/trainer-orders/trainer-orders-page';
+import FriendsListPage from './pages/friends-list-page/fiiends-list-page';
+import TrainingCatalog from './pages/training-catalog/training-catalog';
+import TrainingCard from './pages/training-card/training-card';
+import UserCard from './pages/user-card/user-card';
 
 export function App() {
   const isLoading = useAppSelector(getIsUserLoading);
@@ -35,34 +39,40 @@ export function App() {
         path={AppRoute.Root}
         element={
           <PrivateRoute isAuth={isAuth}>
-            <RoleRoutePage isTrainer={isTrainer} />
+            {!isTrainer ? <MainPage /> : <TrainerRoomPage />}
           </PrivateRoute>
         }
       />
+
       <Route
         path={AppRoute.Intro}
         element={isAuth ? <Navigate to={AppRoute.Root} /> : <IntroPage />}
       />
+
       <Route
         path={AppRoute.Register}
         element={isAuth ? <Navigate to={AppRoute.Root} /> : <RegisterPage />}
       />
+
       <Route
         path={AppRoute.RegisterTrainer}
         element={
-          isAuth ? <Navigate to={AppRoute.Root} /> : <FormRegisterTrainer />
+          !isAuth ? <Navigate to={AppRoute.Intro} /> : <FormRegisterTrainer />
         }
       />
+
       <Route
         path={AppRoute.RegisterClient}
         element={
-          isAuth ? <Navigate to={AppRoute.Root} /> : <FormRegisterClient />
+          !isAuth ? <Navigate to={AppRoute.Intro} /> : <FormRegisterClient />
         }
       />
+
       <Route
         path={AppRoute.Login}
         element={isAuth ? <Navigate to={AppRoute.Root} /> : <LoginPage />}
       />
+
       <Route
         path={AppRoute.Main}
         element={
@@ -71,6 +81,7 @@ export function App() {
           </PrivateRoute>
         }
       />
+
       <Route
         path={AppRoute.TrainerRoom}
         element={
@@ -79,6 +90,7 @@ export function App() {
           </PrivateRoute>
         }
       />
+
       <Route
         path={AppRoute.ClientRoom}
         element={
@@ -87,6 +99,7 @@ export function App() {
           </PrivateRoute>
         }
       />
+
       <Route
         path={AppRoute.CreateTraining}
         element={
@@ -96,6 +109,66 @@ export function App() {
             ) : (
               <Navigate to={AppRoute.Root} />
             )}
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path={AppRoute.TrainerTrainings}
+        element={
+          <PrivateRoute isAuth={isAuth}>
+            {isTrainer ? (
+              <TrainerTrainingsPage />
+            ) : (
+              <Navigate to={AppRoute.Root} />
+            )}
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path={AppRoute.TrainerOrders}
+        element={
+          <PrivateRoute isAuth={isAuth}>
+            {isTrainer ? (
+              <TrainerOrdersPage />
+            ) : (
+              <Navigate to={AppRoute.Root} />
+            )}
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path={AppRoute.Friends}
+        element={
+          <PrivateRoute isAuth={isAuth}>
+            <FriendsListPage />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path={AppRoute.TrainingCard}
+        element={
+          <PrivateRoute isAuth={isAuth}>
+            <TrainingCard isTrainer={isTrainer} />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path={AppRoute.TrainingCatalog}
+        element={
+          <PrivateRoute isAuth={isAuth}>
+            {!isTrainer ? <TrainingCatalog /> : <Navigate to={AppRoute.Root} />}
+          </PrivateRoute>
+        }
+      />
+
+      <Route
+        path={AppRoute.UserCard}
+        element={
+          <PrivateRoute isAuth={isAuth}>
+            <UserCard />
           </PrivateRoute>
         }
       />

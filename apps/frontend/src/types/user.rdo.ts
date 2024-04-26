@@ -18,6 +18,7 @@ export class UserRdo {
   public description!: string;
   public location!: string;
   public createdAt!: Date;
+  public updatedAt!: Date;
   public level!: string;
   public typesOfTraining!: UserTypesTraining[];
   public alerts!: IAlert[];
@@ -32,7 +33,7 @@ export class UserRdo {
   public trainer?: {
     id?: number;
     userId?: number;
-    certificate?: string;
+    certificate?: string[];
     merits?: string;
     isPersonalTraining?: boolean;
   };

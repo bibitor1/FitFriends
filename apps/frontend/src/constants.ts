@@ -1,29 +1,46 @@
+import { UserTypesTraining } from '@fit-friends/types';
+
 export const BASE_RESPONSE_URL = 'http//localhost:4000/api';
 export const FILE_URL = 'http//localhost:4000';
 export const SERVER_API_URL = 'http//localhost:4000/api';
+export const MAX_TRAININGS_COUNT_PER_PAGE = 12;
+export const FILTER_QUERY_DELAY = 1000;
+export const MAX_DIFF_IN_MILLISECONDS = 900000;
+export const MAX_FRIENDS_COUNT_PER_PAGE = 9;
+export const MIN_CALORIES_COUNT_COEFFICIENT = 0.8;
+export const MAX_CALORIES_COUNT_COEFFICIENT = 1.2;
+export const MAX_SLIDER_TRAININGS_COUNT = 9;
+export const MAX_SLIDER_TRAININGS_PER_PAGE = 3;
+export const DISCOUNT_PERCENTAGE = 10;
+export const MAX_SLIDER_POPULAR_TRAININGS_PER_PAGE = 4;
+export const MAX_SLIDER_USERS_COUNT = 8;
+export const MAX_SLIDER_USERS_COUNT_PER_PAGE = 4;
+export const RATING_VALUES = [1, 2, 3, 4, 5];
+export const MAX_USER_CARD_TRAININGS_COUNT = 5;
+export const MAX_POPUP_CERTIFICATES_COUNT_PER_PAGE = 1;
 
 export const DAYS_IN_A_WEEK = 7;
 
 export enum AppRoute {
   Root = '/',
   Intro = '/intro',
-  Login = '/login',
-  Main = '/main',
-  TrainerRoom = '/trainer-room',
-  ClientRoom = '/client-room',
   Info = '/info',
   Register = '/register',
+  Login = '/login',
+  Main = '/main',
+  Friends = '/friends-list',
+  TrainerRoom = '/trainer-room',
+  ClientRoom = '/client-room',
   RegisterTrainer = '/register-trainer',
   RegisterClient = '/register-client',
   CreateTraining = '/create-training',
-  MyTrainings = '/my-trainings',
-  MyOrders = '/my-orders',
-  FriendsList = '/friends-list',
+  TrainerTrainings = '/trainer-trainings',
+  TrainerOrders = '/trainer-orders',
+  ClientOrders = '/client-orders',
   TrainingCard = '/training-card',
   TrainingCatalog = '/training-catalog',
   UsersCatalog = '/users-catalog',
   UserCard = '/user-card',
-  UserCardId = '/user-card/:id',
   NotFound = '*',
 }
 
@@ -47,16 +64,38 @@ export enum APIRoute {
   Refresh = '/auth/refresh',
   UpdateUser = '/users/update',
   Users = '/users',
+  UsersQuery = '/users/feed',
   Notify = '/notify',
-  Friends = '/users/friends',
-  Avatar = 'files/upload/img',
+  TrainerFriends = '/trainer/friends',
+  ClientFriends = '/client/friends',
+  InPersonalTraining = '/personal-order/incoming',
+  ChangePersonalTraining = '/personal-order/change',
+  OutPersonalTraining = '/personal-order',
+  UploadAvatar = 'files/upload/img',
+  UploadVideo = 'files/upload/video',
   Certificate = 'files/upload/pdf',
   DeleteCertificate = 'files/delete/certificate',
-  AddFriend = '/users/friends/add',
-  RemoveFriend = '/users/friends/remove',
-  Trainings = '/trainings',
-  RecommendedTrainings = '/trainings/recommended',
-  Orders = '/orders/trainings',
+  AddRemoveFriend = 'client/friend',
+  CreateTraining = 'trainer/create',
+  UpdateTraining = 'trainer/update',
+  FetchTrainings = 'trainer/feed',
+  FetchRecomended = 'client/recomended',
+  TrainingCatalog = 'trainer/training-catalog',
+  TrainerOrders = '/trainer/orders',
+  ClientBalance = '/client/balance',
+  Training = 'trainer/training',
+  SpendTraining = 'client/training',
+  BuyOrder = 'client/order',
+  BuyPersonalOrder = 'client/personal-order',
+  CreateFeedback = 'feedbacks/create',
+  Feedbacks = 'feedbacks',
+  CheckSubscribe = 'clitnt/check-subscribe',
+  ToggleSubscribe = 'client/subscribe',
+}
+
+export enum SortDirection {
+  Asc = 'asc',
+  Desc = 'desc',
 }
 
 export enum SliceStatus {
@@ -77,6 +116,18 @@ export const LOCATIONS_ZOD = [
 export const MAX_CERTIFICATES_COUNT_PER_PAGE = 3;
 
 export const CERTIFICATE_FILE_TYPES = ['jpg', 'pdf', 'png'];
+export const VIDEO_FILE_TYPES = ['mov', 'avi', 'mp4'];
+
+export const TrainingTypeImageMap = {
+  [UserTypesTraining.Yoga]: 'img/content/thumbnails/training-01.jpg',
+  [UserTypesTraining.Running]: 'img/content/thumbnails/training-06.jpg',
+  [UserTypesTraining.Boxing]: 'img/content/thumbnails/training-03.jpg',
+  [UserTypesTraining.Stretching]: 'img/content/thumbnails/training-12.jpg',
+  [UserTypesTraining.Crossfit]: 'img/content/thumbnails/training-02.jpg',
+  [UserTypesTraining.Aerobics]: 'img/content/thumbnails/training-07.jpg',
+  [UserTypesTraining.Pilates]: 'img/content/thumbnails/training-09.jpg',
+  [UserTypesTraining.Power]: 'img/content/thumbnails/training-10.jpg',
+};
 
 export const TYPE_TRAINING_ZOD = [
   'йога',

@@ -1,4 +1,5 @@
 import {
+  IsBoolean,
   IsEnum,
   IsIn,
   IsInt,
@@ -16,6 +17,7 @@ import {
   Rating,
   TrainingDuration,
   UserTypesTraining,
+  UserLevel,
 } from '@fit-friends/types';
 
 export class TrainingQuery {
@@ -26,9 +28,13 @@ export class TrainingQuery {
   @IsOptional()
   public limit: number = DefaultTraining.Limit;
 
-  @IsIn(['asc', 'desc'])
+  @IsIn(['asc', 'desc', ''])
   @IsOptional()
-  public sortDirection?: 'desc' | 'asc' = DefaultTraining.SortDirection;
+  public priceSort: 'desc' | 'asc' | '' = DefaultTraining.SortDirection;
+
+  @IsIn(['asc', 'desc', ''])
+  @IsOptional()
+  public ratingSort: 'desc' | 'asc' | '' = DefaultTraining.SortDirection;
 
   @IsOptional()
   @Transform(({ value }) => +value)
@@ -47,10 +53,6 @@ export class TrainingQuery {
   @Transform(({ value }) => +value)
   @IsOptional()
   public priceMax: number;
-
-  @IsIn(['asc', 'desc', 'none'])
-  @IsOptional()
-  public priceSort: 'asc' | 'desc' = DefaultTraining.SortDirection;
 
   @Min(CaloriesOfDay.Min)
   @Max(CaloriesOfDay.Max)
@@ -97,4 +99,12 @@ export class TrainingQuery {
   @Transform(({ value }) => value.split(',').map((item: string) => item))
   @IsOptional()
   public durations: TrainingDuration[];
+
+  @IsEnum(UserLevel)
+  @IsOptional()
+  public levelOfUser: UserLevel;
+
+  @IsBoolean()
+  @IsOptional()
+  public isPromo: boolean;
 }

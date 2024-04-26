@@ -235,13 +235,15 @@ function TrainerRoomPage() {
         }),
       )
         .then(isFulfilled)
-        .then(() => {
+        .then(async () => {
           if (avatarFile) {
             const formData = new FormData();
             formData.append('file', avatarFile);
-            dispatch(uploadAvatarAction(formData)).catch(() => {
-              toast.error('Аватар не загружен');
-            });
+            const data = await dispatch(uploadAvatarAction(formData));
+            if (uploadAvatarAction.fulfilled.match(data)) {
+              await dispatch(updateUserAction({ avatar: data.payload.path }));
+              toast.success('Аватар успешно обновлен');
+            }
           }
         })
         .catch(() => {
@@ -768,7 +770,7 @@ function TrainerRoomPage() {
                   <div className="personal-account-coach__navigation">
                     <Link
                       className="thumbnail-link thumbnail-link--theme-light"
-                      to={AppRoute.MyTrainings}
+                      to={AppRoute.TrainerTrainings}
                     >
                       <div className="thumbnail-link__icon thumbnail-link__icon--theme-light">
                         <svg width="30" height="26" aria-hidden="true">
@@ -794,7 +796,7 @@ function TrainerRoomPage() {
                     </Link>
                     <Link
                       className="thumbnail-link thumbnail-link--theme-light"
-                      to={AppRoute.FriendsList}
+                      to={AppRoute.Friends}
                     >
                       <div className="thumbnail-link__icon thumbnail-link__icon--theme-light">
                         <svg width="30" height="26" aria-hidden="true">
@@ -805,7 +807,7 @@ function TrainerRoomPage() {
                     </Link>
                     <Link
                       className="thumbnail-link thumbnail-link--theme-light"
-                      to={AppRoute.MyOrders}
+                      to={AppRoute.TrainerOrders}
                     >
                       <div className="thumbnail-link__icon thumbnail-link__icon--theme-light">
                         <svg width="30" height="26" aria-hidden="true">

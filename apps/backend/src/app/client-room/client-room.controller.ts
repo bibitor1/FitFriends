@@ -6,6 +6,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -20,8 +21,8 @@ import { FriendRdo } from './rdo/friend.rdo';
 import { BalanceRdo } from './rdo/balance.rdo';
 import { OrderRdo } from '../order/rdo/order.rdo';
 import { CreateOrderDto } from './dto/create-order.dto';
-import { SubscriberRdo } from './rdo/subscriber.rdo';
 import { TrainingRdo } from '../trainer-room/rdo/training.rdo';
+import { TrainingQuery } from '../trainer-room/query/training.query';
 
 @ApiTags('client-room')
 @Controller('client')
@@ -57,30 +58,43 @@ export class ClientRoomController {
     return await this.clientRoomService.deleteFriend(payload.sub, id);
   }
 
-  @ApiResponse({
-    type: UserRdo,
-    status: HttpStatus.OK,
-    description: 'The friends list obj has been successfully created.',
-  })
-  @UseGuards(JwtAuthGuard, RoleClientGuard)
-  @Get('friends')
-  public async getfriends(@Req() { user: payload }: IRequestWithTokenPayload) {
-    const users = await this.clientRoomService.showFriends(payload.sub);
-    return fillObject(FriendRdo, users);
-  }
+  // @ApiResponse({
+  //   type: UserRdo,
+  //   status: HttpStatus.OK,
+  //   description: 'The friends list obj has been successfully created.',
+  // })
+  // @UseGuards(JwtAuthGuard, RoleClientGuard)
+  // @Get('friends')
+  // public async getfriends(@Req() { user: payload }: IRequestWithTokenPayload) {
+  //   const users = await this.clientRoomService.showFriends(payload.sub);
+  //   return fillObject(FriendRdo, users);
+  // }
 
   @ApiResponse({
     type: UserRdo,
     status: HttpStatus.OK,
-    description: 'The friends list users has been successfully created.',
+    description: 'Get client friends',
   })
   @UseGuards(JwtAuthGuard, RoleClientGuard)
-  @Get('friends-list')
-  public async getListfriends(
-    @Req() { user: payload }: IRequestWithTokenPayload,
-  ) {
-    const users = await this.clientRoomService.showMyFriendsList(payload.sub);
-    return fillObject(UserRdo, users);
+  @Get('friends')
+  async findFriends(@Req() { user: payload }: IRequestWithTokenPayload) {
+    const friends = await this.clientRoomService.getFriends(payload.sub);
+
+    return fillObject(UserRdo, friends);
+  }
+
+  @ApiResponse({
+    type: TrainingRdo,
+    status: HttpStatus.OK,
+    description: 'Find training recomended for user',
+  })
+  @UseGuards(JwtAuthGuard, RoleClientGuard)
+  @Get('/recomended')
+  public async fileRecomended(@Query() query: TrainingQuery) {
+    const trainings =
+      await this.clientRoomService.getTrainingsRecomended(query);
+
+    return fillObject(TrainingRdo, trainings);
   }
 
   @ApiResponse({
@@ -121,11 +135,11 @@ export class ClientRoomController {
   })
   @UseGuards(JwtAuthGuard, RoleClientGuard)
   @Delete('training/:id')
-  public async buyTraining(
-    @Param('id') id: number,
+  public async deleteTraining(
+    @Param('id') trainingId: number,
     @Req() { user: payload }: IRequestWithTokenPayload,
   ) {
-    return await this.clientRoomService.spendTraining(payload.sub, id);
+    return await this.clientRoomService.spendTraining(payload.sub, trainingId);
   }
 
   @ApiResponse({
@@ -146,52 +160,45 @@ export class ClientRoomController {
     return fillObject(OrderRdo, newOrder);
   }
 
-  @ApiResponse({
-    type: TrainingRdo,
-    status: HttpStatus.OK,
-    description: 'The user recomendation training list successfully created',
-  })
-  @UseGuards(JwtAuthGuard, RoleClientGuard)
-  @Get('recomendations')
-  public async getRecomendationTraining(
-    @Req() { user: payload }: IRequestWithTokenPayload,
-  ) {
-    const trainings =
-      await this.clientRoomService.createRecomandationList(payload);
-    return fillObject(TrainingRdo, trainings);
-  }
-
   @UseGuards(JwtAuthGuard, RoleClientGuard)
   @ApiResponse({
-    type: SubscriberRdo,
+    type: Boolean,
     status: HttpStatus.OK,
     description: 'Subscribe to the trainer.',
   })
   @Post('/subscribe/:id')
   public async subscribe(
-    @Param('id') id: number,
+    @Param('id') trainerId: number,
     @Req() { user: payload }: IRequestWithTokenPayload,
   ) {
     const { name, email } = payload;
-    await this.clientRoomService.subscribe({ trainerId: id, name, email });
+    const data = await this.clientRoomService.subscribe({
+      trainerId,
+      name,
+      email,
+    });
 
-    return fillObject(SubscriberRdo, { trainerId: id, name, email });
+    return data;
   }
 
   @UseGuards(JwtAuthGuard, RoleClientGuard)
   @ApiResponse({
-    type: SubscriberRdo,
+    type: Boolean,
     status: HttpStatus.OK,
-    description: 'Unsubscribe to the trainer.',
+    description: 'Check subscribe to the trainer.',
   })
-  @Delete('/unsubscribe/:id')
-  public async unsubscribe(
-    @Param('id') id: number,
+  @Get('/check-subscribe/:id')
+  public async checkSubscribe(
+    @Param('id') trainerId: number,
     @Req() { user: payload }: IRequestWithTokenPayload,
   ) {
     const { name, email } = payload;
-    await this.clientRoomService.unsubscribe({ name, email, trainerId: id });
+    const data = await this.clientRoomService.checkSubscribe({
+      trainerId,
+      name,
+      email,
+    });
 
-    return 'Unsubscribe to the trainer.';
+    return data;
   }
 }

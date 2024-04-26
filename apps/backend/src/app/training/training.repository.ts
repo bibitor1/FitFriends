@@ -89,6 +89,7 @@ export class TrainingRepository
       ratingMin,
       ratingMax,
       durations,
+      levelOfUser,
     },
     trainerId: number,
   ): Promise<ITraining[] | null> {
@@ -100,9 +101,53 @@ export class TrainingRepository
           { caloriesQtt: { gte: caloriesMin, lte: caloriesMax } },
           { rating: { gte: ratingMin, lte: ratingMax } },
           { duration: { in: durations } },
+          { levelOfUser },
         ],
       },
 
+      include: { feedbacks: true },
+      skip: page > 0 ? limit * (page - 1) : undefined,
+    });
+  }
+
+  public async findRecomended({
+    limit,
+    page,
+    priceMin,
+    priceMax,
+    caloriesMin,
+    caloriesMax,
+    ratingMin,
+    ratingMax,
+    durations,
+    levelOfUser,
+    isPromo,
+    priceSort,
+    ratingSort,
+  }): Promise<ITraining[] | null> {
+    return await this.prisma.training.findMany({
+      where: {
+        AND: [
+          { price: { gte: priceMin, lte: priceMax } },
+          { caloriesQtt: { gte: caloriesMin, lte: caloriesMax } },
+          { rating: { gte: ratingMin, lte: ratingMax } },
+          { duration: { in: durations } },
+          { levelOfUser },
+          { isPromo },
+        ],
+      },
+      orderBy: [
+        ratingSort !== ''
+          ? ratingSort === 'asc'
+            ? { rating: 'asc' }
+            : { rating: 'desc' }
+          : { createdAt: 'desc' },
+        priceSort !== ''
+          ? priceSort === 'asc'
+            ? { price: 'asc' }
+            : { price: 'desc' }
+          : { createdAt: 'desc' },
+      ],
       include: { feedbacks: true },
       skip: page > 0 ? limit * (page - 1) : undefined,
     });
@@ -119,6 +164,7 @@ export class TrainingRepository
     ratingMax,
     types,
     priceSort,
+    ratingSort,
   }): Promise<ITraining[] | null> {
     return await this.prisma.training.findMany({
       where: {
@@ -129,12 +175,18 @@ export class TrainingRepository
           { typeOfTraining: { in: types } },
         ],
       },
-      orderBy:
+      orderBy: [
         priceSort !== 'none'
           ? priceSort === 'asc'
             ? { price: 'asc' }
             : { price: 'desc' }
           : { createdAt: 'desc' },
+        ratingSort !== 'none'
+          ? ratingSort === 'asc'
+            ? { rating: 'asc' }
+            : { rating: 'desc' }
+          : { createdAt: 'desc' },
+      ],
       include: { feedbacks: true },
       skip: page > 0 ? limit * (page - 1) : undefined,
     });
@@ -143,25 +195,6 @@ export class TrainingRepository
   public async findByTranerId(trainerId: number): Promise<ITraining[] | null> {
     return await this.prisma.training.findMany({
       where: { trainerId },
-    });
-  }
-
-  public async findRecomend({
-    typesOfTraining,
-    caloriesQtt,
-    duration,
-    levelOfUser,
-  }): Promise<ITraining[] | null> {
-    return await this.prisma.training.findMany({
-      where: {
-        AND: [
-          { caloriesQtt: { gte: caloriesQtt } },
-          { duration },
-          { levelOfUser },
-          { typeOfTraining: { in: typesOfTraining } },
-        ],
-      },
-      orderBy: { rating: 'desc' },
     });
   }
 

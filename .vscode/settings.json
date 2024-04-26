@@ -3,5 +3,8 @@
   "editor.fontFamily": "JetBrainsMono Nerd Font",
   "files.autoSave": "onFocusChange",
   "editor.tabSize": 2,
-  "editor.inlineSuggest.showToolbar": "onHover"
+  "editor.inlineSuggest.showToolbar": "onHover",
+  "cSpell.words": [
+    "toastify"
+  ]
 }
