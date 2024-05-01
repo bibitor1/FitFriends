@@ -67,17 +67,16 @@ export class ClientRoomService {
       isConfirmed,
     });
 
-    const newFriend = await this.friendRepository.create(userFriendEntity);
-    console.log(newFriend);
+    await this.friendRepository.create(userFriendEntity);
 
-    await this.notifyService.addFriend({
-      targetEmail: friend.email,
-      targetName: friend.name,
-      srcName: payload.name,
-      srcEmail: payload.email,
-    });
-
-    return newFriend;
+    // await this.notifyService.addFriend({
+    //   targetEmail: friend.email,
+    //   targetName: friend.name,
+    //   srcName: payload.name,
+    //   srcEmail: payload.email,
+    // });
+    //
+    return friend;
   }
 
   public async deleteFriend(userId: number, friendId: number): Promise<void> {
@@ -114,7 +113,7 @@ export class ClientRoomService {
     const friends = await this.friendRepository.findByUserId(userId);
     const users: IUser[] = [];
     for (let i = 0; i < friends.length; i++) {
-      const user = await this.userRepository.findById(friends[i].userId);
+      const user = await this.userRepository.findById(friends[i].friendId);
       users.push(user);
     }
     return users;

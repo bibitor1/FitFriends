@@ -174,11 +174,17 @@ export class UserRepository
         AND: [
           { role: { contains: filter.role } },
 
-          { location: { in: filter.locations } },
+          {
+            location: { in: filter.locations },
+          },
 
           { level: { contains: filter.level } },
 
-          { typesOfTraining: { hasSome: filter.typesOfTraining } },
+          {
+            typesOfTraining: filter.typesOfTraining
+              ? { hasSome: filter.typesOfTraining }
+              : undefined,
+          },
 
           {
             client: {

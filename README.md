@@ -10,7 +10,7 @@ API проекта находится по адресу: http://localhost:4000/s
 
 3. Для создания контейнера базы данных в докере выполните команду:
 `docker compose \
---file docker-compose.dev.yml \
+--file docker-compose.yml \
 --env-file .env \
 --project-name "fitfriends" \
 up -d`
