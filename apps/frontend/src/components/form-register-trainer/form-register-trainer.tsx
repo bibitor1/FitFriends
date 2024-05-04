@@ -17,15 +17,12 @@ import {
 } from '@fit-friends/types';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 import {
-  checkUserAction,
   updateUserAction,
   uploadCertificateAction,
 } from '../../redux/userSlice/apiUserActions';
 import { useNavigate } from 'react-router-dom';
 import { AppRoute } from '../../constants';
-import { isFulfilled } from '@reduxjs/toolkit';
-import { toast } from 'react-toastify';
-import { getUser } from '../../redux/userSlice/selectors';
+import { getIsAuth, getUser } from '../../redux/userSlice/selectors';
 
 const formSchema = z.object({
   typesOfTraining: z
@@ -48,16 +45,20 @@ const formSchema = z.object({
 
 type FormSchema = z.infer<typeof formSchema>;
 
-function FormRegisgerTrainer() {
+function FormRegisterTrainer() {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const user = useAppSelector(getUser);
+  const isAuth = useAppSelector(getIsAuth);
 
   useEffect(() => {
+    if (!isAuth) {
+      navigate(AppRoute.Intro);
+    }
     if (!user?.name) {
       navigate(AppRoute.Register);
     }
-  }, [user, navigate]);
+  }, [user, isAuth, navigate]);
 
   const {
     register,
@@ -76,7 +77,7 @@ function FormRegisgerTrainer() {
     'Загрузите сюда файлы формата PDF, JPG или PNG',
   ]);
 
-  const onSubmit: SubmitHandler<FormSchema> = (data) => {
+  const onSubmit: SubmitHandler<FormSchema> = async (data) => {
     if (!certificateError && certificateInputUsed) {
       const updateData = {
         level: data.level,
@@ -88,30 +89,25 @@ function FormRegisgerTrainer() {
         },
       };
 
-      dispatch(updateUserAction(updateData))
-        .then(isFulfilled)
-        .then(() => {
-          if (certificate) {
-            const formData = new FormData();
-            formData.append('file', certificate);
-            dispatch(uploadCertificateAction(formData)).then((data: any) => {
-              dispatch(
-                updateUserAction({
-                  trainer: {
-                    certificate: [data.payload?.path],
-                  },
-                }),
-              );
-            });
+      const res = await dispatch(updateUserAction(updateData));
+      if (certificate && updateUserAction.fulfilled.match(res)) {
+        const formData = new FormData();
+        formData.append('file', certificate);
+        const dataCertificate = await dispatch(
+          uploadCertificateAction(formData),
+        );
+        if (uploadCertificateAction.fulfilled.match(dataCertificate)) {
+          const resCertificate = await dispatch(
+            updateUserAction({
+              trainer: { certificate: [dataCertificate.payload?.path] },
+            }),
+          );
+          if (updateUserAction.fulfilled.match(resCertificate)) {
+            navigate(AppRoute.TrainerRoom);
           }
-          reset();
-          dispatch(checkUserAction);
-
-          navigate(AppRoute.TrainerRoom);
-        })
-        .catch(() => {
-          toast.error('Что-то пошло не так');
-        });
+        }
+      }
+      reset();
     }
     setCertificateInputUsed(true);
   };
@@ -260,7 +256,9 @@ function FormRegisgerTrainer() {
                           ></textarea>
                         </label>
                         {errors.merits && (
-                          <span role="alert" className="error"></span>
+                          <span role="alert" className="error">
+                            {errors.merits?.message}
+                          </span>
                         )}
                       </div>
                       <div className="questionnaire-coach__checkbox">
@@ -309,4 +307,4 @@ function FormRegisgerTrainer() {
   );
 }
 
-export default FormRegisgerTrainer;
+export default FormRegisterTrainer;
