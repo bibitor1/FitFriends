@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { PersonalOrderRepository } from './personal-order.repository';
 import { UserRepository } from '../user/user.repository';
-import { ITokenPayload, OrderStatus, UserRole } from '@fit-friends/types';
+import { ITokenPayload, OrderStatus } from '@fit-friends/types';
 import { PersonalOrderEntity } from './personal-order.entity';
 
 @Injectable()
@@ -18,22 +18,31 @@ export class PersonalOrderService {
     private readonly userRepository: UserRepository,
   ) {}
 
-  public async buyPersonalTraining(userId: number, trainerId: number) {
-    const trainer = await this.userRepository
-      .findById(trainerId)
+  public async buyPersonalTraining(userId: number, targetId: number) {
+    const targetUser = await this.userRepository
+      .findById(targetId)
       .catch((err) => {
         this.logger.error(err);
         throw new NotFoundException('User not found');
       });
 
-    if (!trainer || trainer.role === UserRole.Client) {
-      throw new NotFoundException('Trainer not found');
+    if (!targetUser) {
+      throw new NotFoundException('TargetUser not found');
+    }
+    const existsOrder =
+      await this.personalOrderRepository.findByUserIdAndTargetId(
+        userId,
+        targetId,
+      );
+
+    if (existsOrder.length) {
+      return existsOrder;
     }
 
-    if (userId !== trainerId) {
+    if (userId !== targetId) {
       const entity = new PersonalOrderEntity({
         userId,
-        trainerId,
+        targetId,
         orderStatus: OrderStatus.Pending,
       });
       return await this.personalOrderRepository.create(entity);
@@ -44,7 +53,11 @@ export class PersonalOrderService {
     return await this.personalOrderRepository.findById(orderId);
   }
 
-  public async getPersonalOrders(userId: number) {
+  public async getInPersonalOrders(targetId: number) {
+    return await this.personalOrderRepository.findByTargetId(targetId);
+  }
+
+  public async getOutPersonalOrders(userId: number) {
     return await this.personalOrderRepository.findByUserId(userId);
   }
 
@@ -62,7 +75,7 @@ export class PersonalOrderService {
     if (!order) {
       throw new NotFoundException('Order not found');
     }
-    if (order.trainerId !== payload.sub) {
+    if (order.targetId !== payload.sub) {
       throw new ForbiddenException('You are not the trainer');
     }
 

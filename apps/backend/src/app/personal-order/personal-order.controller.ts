@@ -31,13 +31,13 @@ export class PersonalOrderController {
   @UseGuards(JwtAuthGuard, RoleClientGuard)
   @Post(':id')
   public async addPersonalOrder(
-    @Param('id') trainerId: number,
+    @Param('id') targetId: number,
     @Req() { user: payload }: IRequestWithTokenPayload,
   ) {
     const newPersonalOrder =
       await this.personalOrderService.buyPersonalTraining(
         payload.sub,
-        trainerId,
+        targetId,
       );
     return fillObject(PersonalOrderRdo, newPersonalOrder);
   }
@@ -66,10 +66,23 @@ export class PersonalOrderController {
     description: 'The personal training order successfully showed',
   })
   @UseGuards(JwtAuthGuard)
-  @Get('/:id')
-  public async checkPersonalOrder(@Param('id') orderId: number) {
-    const personalOrder =
-      await this.personalOrderService.getPersonalOrder(orderId);
-    return fillObject(PersonalOrderRdo, personalOrder);
+  @Get('/in/:id')
+  public async getInPersonalOrders(@Param('id') userId: number) {
+    const personalOrders =
+      await this.personalOrderService.getInPersonalOrders(userId);
+    return fillObject(PersonalOrderRdo, personalOrders);
+  }
+
+  @ApiResponse({
+    type: PersonalOrderRdo,
+    status: HttpStatus.OK,
+    description: 'The personal training order successfully showed',
+  })
+  @UseGuards(JwtAuthGuard)
+  @Get('/out/:id')
+  public async getOutPersonalOrders(@Param('id') userId: number) {
+    const personalOrders =
+      await this.personalOrderService.getOutPersonalOrders(userId);
+    return fillObject(PersonalOrderRdo, personalOrders);
   }
 }
