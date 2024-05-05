@@ -7,7 +7,7 @@ import {
 import { TrainingRepository } from '../training/training.repository';
 import { OrderRepository } from '../order/order.repository';
 import { FriendRepository } from '../friend/friend.repository';
-import { IFriend, ITokenPayload, IUser } from '@fit-friends/types';
+import { IFriend, ITokenPayload, ITraining, IUser } from '@fit-friends/types';
 import { FriendEntity } from '../friend/friend.entity';
 import { BalanceRepository } from '../balance/balance.repository';
 import { BalanceEntity } from '../balance/balance.entity';
@@ -69,13 +69,13 @@ export class ClientRoomService {
 
     await this.friendRepository.create(userFriendEntity);
 
-    // await this.notifyService.addFriend({
-    //   targetEmail: friend.email,
-    //   targetName: friend.name,
-    //   srcName: payload.name,
-    //   srcEmail: payload.email,
-    // });
-    //
+    await this.notifyService.addFriend({
+      targetEmail: friend.email,
+      targetName: friend.name,
+      srcName: payload.name,
+      srcEmail: payload.email,
+    });
+
     return friend;
   }
 
@@ -151,6 +151,23 @@ export class ClientRoomService {
     }
 
     return balances;
+  }
+
+  public async getAllTrainingsByBalance(userId: number) {
+    const balances = await this.balanceRepository.findByUserId(userId);
+
+    if (!balances) {
+      throw new NotFoundException('Balance not found');
+    }
+
+    const trainings: ITraining[] = [];
+    for (let i = 0; i < balances.length; i++) {
+      const training = await this.trainingRepository.findById(
+        balances[i].trainingId,
+      );
+      trainings.push(training);
+    }
+    return trainings;
   }
 
   public async spendTraining(userId: number, trainingId: number) {
