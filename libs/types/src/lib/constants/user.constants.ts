@@ -1,17 +1,6 @@
-export const AUTH_USER_NOT_FOUND = 'User not found';
-export const AUTH_USER_PASSWORD_WRONG = 'User password or email is wrong';
-export const AUTH_USER_EXISTS = 'User with this email exists';
 export const SALT_ROUNDS = 10;
-export const AUTH_USER_EMAIL_NOT_VALID = 'The email is not valid';
-export const AUTH_USER_DATE_BIRTH_NOT_VALID =
-  'The user date birth is not valid';
-export const AUTH_NOT_FOR_AUTH_USER = 'Only for new user';
-export const AUTH_USER_ONLY_CLIENT_PERMIT = 'Only users permisions';
-export const AUTH_USER_ONLY_TRAINERS_PERMIT = 'Only treiners permisions';
 export const DEFAULT_USER_COUNT_LIMIT = 50;
 export const MAX_AVATAR_FILE_SIZE = 1000000;
-export const TOO_BIG_FILE = 'Too big file';
-export const WRONG_FILE_TYPE = 'Wrong file type';
 
 export const ImageTypes: string[] = ['jpg', 'jpeg', 'png'];
 export const VideoTypes: string[] = ['mov', 'avi', 'mp4'];
@@ -47,9 +36,9 @@ export const Image = {
 } as const;
 
 export enum AuthErrorMessage {
-  UserAlreadyExist = 'User with this email exists',
-  UserNotFound = 'User with this email/id not found',
-  UserPasswordWrong = 'User password is wrong',
+  UserAlreadyExist = 'User with this email already exists',
+  UserNotFound = 'User with this email not found',
+  UserPasswordOrEmailWrong = 'User password or email is wrong',
   RefreshTokenNotValid = 'Refresh token is not valid',
   WrongAccessToken = 'Wrong access-token or expired',
   ActionNotAllowed = 'User can update only his own data',
@@ -71,4 +60,9 @@ export enum AuthErrorMessage {
   GymAlreadyFavorite = 'The gym is already in favorite list',
   GymNotFavorite = 'The gym is not in favorite list',
   SameId = 'Requestor ID and respondend ID are the same',
+}
+
+export enum FileError {
+  TooBigFile = 'Too big file',
+  WrongFileType = 'Wrong file type',
 }

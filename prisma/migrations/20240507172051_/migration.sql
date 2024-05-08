@@ -117,7 +117,7 @@ CREATE TABLE "orders" (
 CREATE TABLE "personal_order" (
     "id" SERIAL NOT NULL,
     "user_id" INTEGER NOT NULL,
-    "trainer_id" INTEGER NOT NULL,
+    "target_id" INTEGER NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "update_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "order_status" TEXT NOT NULL DEFAULT '',

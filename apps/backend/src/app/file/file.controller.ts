@@ -18,9 +18,8 @@ import {
   IRequestWithTokenPayload,
   ImageTypes,
   MAX_AVATAR_FILE_SIZE,
-  TOO_BIG_FILE,
   VideoTypes,
-  WRONG_FILE_TYPE,
+  FileError,
 } from '@fit-friends/types';
 import { FileService } from './file.service';
 import { fillObject } from '@fit-friends/core';
@@ -48,7 +47,7 @@ export class FileController {
     );
     if (!VideoTypes.includes(fileType)) {
       throw new HttpException(
-        { status: HttpStatus.NOT_ACCEPTABLE, error: WRONG_FILE_TYPE },
+        { status: HttpStatus.NOT_ACCEPTABLE, error: FileError.WrongFileType },
         HttpStatus.NOT_ACCEPTABLE,
       );
     }
@@ -71,13 +70,13 @@ export class FileController {
     );
     if (file.size > MAX_AVATAR_FILE_SIZE) {
       throw new HttpException(
-        { status: HttpStatus.NOT_ACCEPTABLE, error: TOO_BIG_FILE },
+        { status: HttpStatus.NOT_ACCEPTABLE, error: FileError.TooBigFile },
         HttpStatus.NOT_ACCEPTABLE,
       );
     }
     if (!ImageTypes.includes(fileType)) {
       throw new HttpException(
-        { status: HttpStatus.NOT_ACCEPTABLE, error: WRONG_FILE_TYPE },
+        { status: HttpStatus.NOT_ACCEPTABLE, error: FileError.WrongFileType },
         HttpStatus.NOT_ACCEPTABLE,
       );
     }
@@ -110,7 +109,7 @@ export class FileController {
       )
     ) {
       throw new HttpException(
-        { status: HttpStatus.NOT_ACCEPTABLE, error: WRONG_FILE_TYPE },
+        { status: HttpStatus.NOT_ACCEPTABLE, error: FileError.WrongFileType },
         HttpStatus.NOT_ACCEPTABLE,
       );
     }

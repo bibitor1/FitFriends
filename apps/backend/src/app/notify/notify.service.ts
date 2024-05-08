@@ -9,7 +9,7 @@ import { CreateNotifyDto } from './dto/create-notify.dto';
 import { NotifyEntity } from './notify.entity';
 import { NotifyRepository } from './notify.repository';
 import { UserRepository } from '../user/user.repository';
-import { SUBSCRIBE_TEXT, UNSUBSCRIBE_TEXT } from './notify.constant';
+import { NotificationMessages } from './notify.constant';
 import { MailService } from '../mail/mail.service';
 
 @Injectable()
@@ -26,7 +26,7 @@ export class NotifyService {
     this.mailService.sendMailNewSubscribe(dto);
     const notifyEntity = new NotifyEntity({
       targetUserEmail: dto.email,
-      text: SUBSCRIBE_TEXT,
+      text: NotificationMessages.SubscribeText,
     });
     const newNotify = await this.notifyRepository.create(notifyEntity);
     return newNotify;
@@ -36,7 +36,7 @@ export class NotifyService {
     this.mailService.sendMailUnsubscribe(dto);
     const notifyEntity = new NotifyEntity({
       targetUserEmail: dto.email,
-      text: UNSUBSCRIBE_TEXT,
+      text: NotificationMessages.UnSubscribeText,
     });
     const newNotify = await this.makeNewNotify(notifyEntity);
     return newNotify;
