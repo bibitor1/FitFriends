@@ -10,8 +10,8 @@ POST {{baseUrl}}/auth/register HTTP/1.1
 Content-Type: application/json
 
 {
-  "name": "Алексей",
-  "email": "mabori6@gmail.com",
+  "name": "Евгений",
+  "email": "evgenii@gmail.com",
   "avatar": "avatar.jpg",
   "password": "222222",
   "gender": "мужской",
@@ -35,7 +35,7 @@ Content-Type: application/json
 
 {
   "name": "Алексей",
-  "email": "mabori22@gmail.com",
+  "email": "evgenii1@gmail.com",
   "avatar": "avatar.jpg",
   "password": "222222",
   "gender": "мужской",
@@ -60,7 +60,7 @@ POST {{baseUrl}}/auth/login HTTP/1.1
 Content-Type: application/json
 
 {
-  "email": "ma8@ma.ru",
+  "email": "evgenii@gmail.com",
   "password": "222222"
 }
 ###
