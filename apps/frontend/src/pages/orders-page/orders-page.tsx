@@ -5,7 +5,7 @@ import { useAppDispatch, useAppSelector } from '../../redux/store';
 import { getOrders } from '../../redux/userSlice/selectors';
 import {
   AppRoute,
-  MAX_ORDERS_COUNT_PER_PAGE,
+  Pagination,
   SortDirection,
 } from '../../constants';
 import { ArrowLeft, IconSortDown, IconSortUp } from '../../helper/svg-const';
@@ -20,7 +20,7 @@ function OrdersPage(): JSX.Element {
 
   const [ordersPage, setOrdersPage] = useState(1);
   const pagesCount = Math.ceil(
-    currentOrders.length / MAX_ORDERS_COUNT_PER_PAGE,
+    currentOrders.length / Pagination.maxOrdersCountPerPage,
   );
 
   const [moneySelectedSortDirection, setMoneySelectedSortDirection] =
@@ -123,7 +123,7 @@ function OrdersPage(): JSX.Element {
               </div>
               <ul className="my-orders__list">
                 {currentOrders
-                  .slice(0, ordersPage * MAX_ORDERS_COUNT_PER_PAGE)
+                  .slice(0, ordersPage * Pagination.maxOrdersCountPerPage)
                   .map((order) => (
                     <OrdersItem key={order.id} order={order} />
                   ))}

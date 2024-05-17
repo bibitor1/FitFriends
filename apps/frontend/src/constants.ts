@@ -1,30 +1,36 @@
 import { UserTypesTraining } from '@fit-friends/types';
 
-export const BASE_RESPONSE_URL = 'http//localhost:4000/api';
-export const FILE_URL = 'http//localhost:4000';
-export const SERVER_API_URL = 'http//localhost:4000/api';
-export const MAX_TRAININGS_COUNT_PER_PAGE = 12;
 export const FILTER_QUERY_DELAY = 1000;
 export const MAX_DIFF_IN_MILLISECONDS = 900000;
-export const MAX_FRIENDS_COUNT_PER_PAGE = 9;
-export const MIN_CALORIES_COUNT_COEFFICIENT = 0.8;
-export const MAX_CALORIES_COUNT_COEFFICIENT = 1.2;
-export const MAX_SLIDER_TRAININGS_COUNT = 9;
-export const MAX_SLIDER_TRAININGS_PER_PAGE = 3;
 export const DISCOUNT_PERCENTAGE = 10;
-export const MAX_SLIDER_POPULAR_TRAININGS_PER_PAGE = 4;
-export const MAX_SLIDER_USERS_COUNT = 8;
-export const MAX_SLIDER_USERS_COUNT_PER_PAGE = 4;
 export const RATING_VALUES = [1, 2, 3, 4, 5];
 export const MAX_USER_CARD_TRAININGS_COUNT = 5;
-export const MAX_POPUP_CERTIFICATES_COUNT_PER_PAGE = 1;
-export const MAX_USERS_CATALOG_ITEMS_COUNT_PER_PAGE = 9;
-export const MAX_LOCATION_TYPES_COUNT_PER_PAGE = 4;
-export const MAX_USERS_CATALOG_COUNT_PER_PAGE = 20;
-export const MAX_TRAINING_TYPES_COUNT_PER_PAGE = 4;
 export const DAYS_IN_A_WEEK = 7;
-export const MAX_ORDERS_COUNT_PER_PAGE = 4;
-export const MAX_PURCHASES_ITEMS_COUNT_PER_PAGE = 8;
+
+export enum Pagination {
+  maxTrainingsCountPerPage = 12,
+  maxFriendsCountPerPage = 9,
+  maxPopupCertificatesCountPerPage = 1,
+  maxUsersCatalogItemsCountPerPage = 9,
+  maxLocationTypesCountPerPage = 4,
+  maxUsersCatalogCountPerPage = 20,
+  maxTrainingTypesCountPerPage = 4,
+  maxOrdersCountPerPage = 4,
+  maxPurchasesItemsCountPerPage = 8,
+}
+
+export enum Slider {
+  maxSliderTrainingsCount = 9,
+  maxSliderTrainingsPerPage = 3,
+  maxSliderPopularTrainingsPerPage = 4,
+  maxSliderUsersCount = 8,
+  maxSliderUsersCountPerPage = 4,
+}
+
+export enum CalorieCoefficients {
+  minCaloriesCountCoefficient = 0.8,
+  maxCaloriesCountCoefficient = 1.2,
+}
 
 export enum AppRoute {
   Root = '/',

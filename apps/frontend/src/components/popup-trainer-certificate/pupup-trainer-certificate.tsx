@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { MAX_POPUP_CERTIFICATES_COUNT_PER_PAGE } from '../../constants';
+import { Pagination } from '../../constants';
 import CertificateItem from '../certificate-item/certificate-item';
 import {
   ArrowLeft,
@@ -27,7 +27,7 @@ function PopupTrainerCertificates({
 
   const handleRightArrowButtonClick = () => {
     const pagesCount = Math.ceil(
-      certificates.length / MAX_POPUP_CERTIFICATES_COUNT_PER_PAGE,
+      certificates.length / Pagination.maxPopupCertificatesCountPerPage,
     );
     setCertificatesPage((prevState) =>
       prevState < pagesCount ? prevState + 1 : prevState,
@@ -80,10 +80,10 @@ function PopupTrainerCertificates({
                 {certificates
                   .slice(
                     (certificatesPage - 1) *
-                      MAX_POPUP_CERTIFICATES_COUNT_PER_PAGE,
+                      Pagination.maxPopupCertificatesCountPerPage,
                     (certificatesPage - 1) *
-                      MAX_POPUP_CERTIFICATES_COUNT_PER_PAGE +
-                      MAX_POPUP_CERTIFICATES_COUNT_PER_PAGE,
+                      Pagination.maxPopupCertificatesCountPerPage +
+                      Pagination.maxPopupCertificatesCountPerPage,
                   )
                   .map((certificateItem) => (
                     <li

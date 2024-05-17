@@ -9,9 +9,7 @@ import {
 } from '@fit-friends/types';
 import {
   FILTER_QUERY_DELAY,
-  MAX_LOCATION_TYPES_COUNT_PER_PAGE,
-  MAX_TRAINING_TYPES_COUNT_PER_PAGE,
-  MAX_USERS_CATALOG_COUNT_PER_PAGE,
+  Pagination,
 } from '../../constants';
 import { debounce } from '../../helper/utils';
 import { fetchUsersCatalogAction } from '../../redux/userSlice/apiUserActions';
@@ -22,12 +20,12 @@ function UsersCatalogFilter(): JSX.Element {
 
   const [currentLocationTypesPage, setCurentLocationTypesPage] = useState(1);
   const locationTypesPagesCount = Math.ceil(
-    Object.values(UserLocation).length / MAX_LOCATION_TYPES_COUNT_PER_PAGE,
+    Object.values(UserLocation).length / Pagination.maxLocationTypesCountPerPage,
   );
 
   const [currentTrainingTypesPage, setCurentTrainingTypesPage] = useState(1);
   const trainingTypesPagesCount = Math.ceil(
-    Object.values(UserTypesTraining).length / MAX_TRAINING_TYPES_COUNT_PER_PAGE,
+    Object.values(UserTypesTraining).length / Pagination.maxTrainingTypesCountPerPage,
   );
 
   const [locationValue, setLocationValue] = useState<UserLocation[]>([]);
@@ -51,7 +49,7 @@ function UsersCatalogFilter(): JSX.Element {
   useEffect(() => {
     dispatch(
       fetchUsersCatalogAction({
-        limit: MAX_USERS_CATALOG_COUNT_PER_PAGE,
+        limit: Pagination.maxUsersCatalogCountPerPage,
         locations: locationFilter.join(','),
         typesOfTraining: trainingTypeFilter.join(','),
         level: trainingLevelFilter,
@@ -123,7 +121,7 @@ function UsersCatalogFilter(): JSX.Element {
           {Object.values(UserLocation)
             .slice(
               0,
-              currentLocationTypesPage * MAX_LOCATION_TYPES_COUNT_PER_PAGE,
+              currentLocationTypesPage * Pagination.maxLocationTypesCountPerPage,
             )
             .map((location) => (
               <li key={nanoid()} className="user-catalog-form__check-list-item">
@@ -171,7 +169,7 @@ function UsersCatalogFilter(): JSX.Element {
           {Object.values(UserTypesTraining)
             .slice(
               0,
-              currentTrainingTypesPage * MAX_TRAINING_TYPES_COUNT_PER_PAGE,
+              currentTrainingTypesPage * Pagination.maxTrainingTypesCountPerPage,
             )
             .map((option) => (
               <li key={nanoid()} className="user-catalog-form__check-list-item">

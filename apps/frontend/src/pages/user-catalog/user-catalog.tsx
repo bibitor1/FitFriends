@@ -1,10 +1,7 @@
 import Header from '../../components/header/header';
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
-import {
-  AppRoute,
-  MAX_USERS_CATALOG_ITEMS_COUNT_PER_PAGE,
-} from '../../constants';
+import { AppRoute, Pagination } from '../../constants';
 import { getUserId, getUsers } from '../../redux/userSlice/selectors';
 import { useAppSelector } from '../../redux/store';
 import UsersCatalogFilter from '../../components/user-catalog-filter/user-catalog-filter';
@@ -18,7 +15,7 @@ function UsersCatalog(): JSX.Element {
 
   const [currentListPage, setCurrentListPage] = useState(1);
   const pagesCount = Math.ceil(
-    usersCatalog.length / MAX_USERS_CATALOG_ITEMS_COUNT_PER_PAGE,
+    usersCatalog.length / Pagination.maxUsersCatalogItemsCountPerPage,
   );
 
   const handleShowMoreButtonClick = () => {

@@ -11,6 +11,12 @@ import 'dotenv';
 
 const REQUEST_TIMEOUT = 200;
 const BASE_URL = `${import.meta.env.VITE_SERVER_URL}`;
+const TOKEN_EXPIRATION_THRESHOLD = 1;
+
+enum HttpStatusCode {
+  OK = 200,
+  UNAUTHORIZED = 401,
+}
 
 const token = getAccessToken();
 
@@ -32,7 +38,7 @@ axiosInstance.interceptors.request.use(
     }
     const decodedToken = jwtDecode(token);
     if (decodedToken.exp) {
-      const isTokenExpired = dayjs.unix(decodedToken.exp).diff(dayjs()) < 1;
+      const isTokenExpired = dayjs.unix(decodedToken.exp).diff(dayjs()) < TOKEN_EXPIRATION_THRESHOLD;
 
       if (!isTokenExpired) {
         config.headers.Authorization = `Bearer ${token}`;
@@ -43,7 +49,7 @@ axiosInstance.interceptors.request.use(
 
       if (decodedRefreshToken.exp) {
         const isRefreshTokenExpired =
-          dayjs.unix(decodedRefreshToken.exp).diff(dayjs()) < 1;
+          dayjs.unix(decodedRefreshToken.exp).diff(dayjs()) < TOKEN_EXPIRATION_THRESHOLD;
 
         if (!isRefreshTokenExpired) {
           const response = await axios.post(
@@ -56,12 +62,12 @@ axiosInstance.interceptors.request.use(
             },
           );
 
-          if (response.status === 200) {
+          if (response.status === HttpStatusCode.OK) {
             console.log('refresh token success');
             saveTokens(response.data.access_token, response.data.refresh_token);
             config.headers.Authorization = `Bearer ${getAccessToken()}`;
             return config;
-          } else if (response.status === 401) {
+          } else if (response.status === HttpStatusCode.UNAUTHORIZED) {
             console.log('refresh token failed');
             dropTokens();
           }

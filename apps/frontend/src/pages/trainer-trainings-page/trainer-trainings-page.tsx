@@ -2,7 +2,7 @@ import Header from '../../components/header/header';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import TrainingsFilter from '../../components/trainings-filter/trainings-filter';
-import { AppRoute, MAX_TRAININGS_COUNT_PER_PAGE } from '../../constants';
+import { AppRoute, Pagination } from '../../constants';
 import { getTrainings } from '../../redux/trainingSlice/selectors';
 import { useAppSelector } from '../../redux/store';
 import TrainingThumbnail from '../../components/training-thumbnail/training-thumbnail';
@@ -15,7 +15,7 @@ function TrainerTrainingsPage(): JSX.Element {
 
   const [trainingsPage, setTrainingsPage] = useState(1);
   const pagesCount = Math.ceil(
-    currentTrainings.length / MAX_TRAININGS_COUNT_PER_PAGE,
+    currentTrainings.length / Pagination.maxTrainingsCountPerPage,
   );
 
   const handleShowMoreButtonClick = () => {
@@ -57,7 +57,7 @@ function TrainerTrainingsPage(): JSX.Element {
                 <div className="my-trainings">
                   <ul className="my-trainings__list">
                     {currentTrainings
-                      .slice(0, trainingsPage * MAX_TRAININGS_COUNT_PER_PAGE)
+                      .slice(0, trainingsPage * Pagination.maxTrainingsCountPerPage)
                       .map((training) => (
                         <li key={training.id} className="my-trainings__item">
                           <TrainingThumbnail training={training} />

@@ -3,7 +3,7 @@ import Header from '../../components/header/header';
 import {
   AppRoute,
   MAX_DIFF_IN_MILLISECONDS,
-  MAX_FRIENDS_COUNT_PER_PAGE,
+  Pagination,
 } from '../../constants';
 import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
@@ -39,7 +39,7 @@ function FriendsListPage(): JSX.Element {
   const inOrders = useAppSelector(getInPersonalOrders);
 
   const [currentListPage, setCurrentListPage] = useState(1);
-  const pagesCount = Math.ceil(myFriends.length / MAX_FRIENDS_COUNT_PER_PAGE);
+  const pagesCount = Math.ceil(myFriends.length / Pagination.maxFriendsCountPerPage);
 
   const [onlineFilterChecked, setOnlineFilterChecked] = useState(false);
 
@@ -130,7 +130,7 @@ function FriendsListPage(): JSX.Element {
               <ul className="friends-list__list">
                 {myFriends
                   .filter((user) => filterOfflineUsers(user))
-                  .slice(0, currentListPage * MAX_FRIENDS_COUNT_PER_PAGE)
+                  .slice(0, currentListPage * Pagination.maxFriendsCountPerPage)
                   .map((friend) => (
                     <FriendsListItem
                       key={friend.userId}

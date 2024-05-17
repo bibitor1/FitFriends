@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import Header from '../../components/header/header';
-import { AppRoute, MAX_TRAININGS_COUNT_PER_PAGE } from '../../constants';
+import { AppRoute, Pagination } from '../../constants';
 import { useState } from 'react';
 import TrainingThumbnail from '../../components/training-thumbnail/training-thumbnail';
 import { useAppSelector } from '../../redux/store';
@@ -14,7 +14,7 @@ function TrainingCatalog(): JSX.Element {
 
   const [trainingsPage, setTrainingsPage] = useState(1);
   const pagesCount = Math.ceil(
-    trainingCatalog.length / MAX_TRAININGS_COUNT_PER_PAGE,
+    trainingCatalog.length / Pagination.maxTrainingsCountPerPage,
   );
 
   const handleShowMoreButtonClick = () => {
@@ -55,7 +55,7 @@ function TrainingCatalog(): JSX.Element {
               <div className="training-catalog">
                 <ul className="training-catalog__list">
                   {trainingCatalog
-                    .slice(0, trainingsPage * MAX_TRAININGS_COUNT_PER_PAGE)
+                    .slice(0, trainingsPage * Pagination.maxTrainingsCountPerPage)
                     .map((training) => (
                       <li key={training.id} className="training-catalog__item">
                         <TrainingThumbnail training={training} />

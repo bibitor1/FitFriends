@@ -1,7 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import {
   AppRoute,
-  MAX_SLIDER_POPULAR_TRAININGS_PER_PAGE,
+  Slider,
   SortDirection,
 } from '../../constants';
 import { useEffect, useState } from 'react';
@@ -35,11 +35,11 @@ function PopularTrainings(): JSX.Element {
 
   const handleNextArrowButtonClick = () => {
     const currentSliderLength = popularTrainings.slice(
-      (trainingsCurrentPage - 1) * MAX_SLIDER_POPULAR_TRAININGS_PER_PAGE,
-      trainingsCurrentPage * MAX_SLIDER_POPULAR_TRAININGS_PER_PAGE,
+      (trainingsCurrentPage - 1) * Slider.maxSliderPopularTrainingsPerPage,
+      trainingsCurrentPage * Slider.maxSliderPopularTrainingsPerPage,
     ).length;
     setTrainingsCurrentPage((prevState) =>
-      currentSliderLength < MAX_SLIDER_POPULAR_TRAININGS_PER_PAGE ||
+      currentSliderLength < Slider.maxSliderPopularTrainingsPerPage ||
       currentSliderLength === popularTrainings.length
         ? prevState
         : prevState + 1,
@@ -89,8 +89,8 @@ function PopularTrainings(): JSX.Element {
             {popularTrainings
               .slice(
                 (trainingsCurrentPage - 1) *
-                  MAX_SLIDER_POPULAR_TRAININGS_PER_PAGE,
-                trainingsCurrentPage * MAX_SLIDER_POPULAR_TRAININGS_PER_PAGE,
+                Slider.maxSliderPopularTrainingsPerPage,
+                trainingsCurrentPage * Slider.maxSliderPopularTrainingsPerPage,
               )
               .map((training) => (
                 <li key={training.id} className="popular-trainings__item">

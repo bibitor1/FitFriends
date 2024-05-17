@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 import { getTrainingsBalance } from '../../redux/userSlice/selectors';
 import { TypeOfOrder } from '@fit-friends/types';
-import { AppRoute, MAX_PURCHASES_ITEMS_COUNT_PER_PAGE } from '../../constants';
+import { AppRoute, Pagination } from '../../constants';
 import {
   fetchBalanceAction,
   fetchTrainingsBalanceAction,
@@ -25,8 +25,8 @@ function BalancePage(): JSX.Element {
   const [currentListPage, setCurrentListPage] = useState(1);
   const pagesCount = Math.ceil(
     trainings
-      ? trainings.length / MAX_PURCHASES_ITEMS_COUNT_PER_PAGE
-      : 1 / MAX_PURCHASES_ITEMS_COUNT_PER_PAGE,
+      ? trainings.length / Pagination.maxPurchasesItemsCountPerPage
+      : 1 / Pagination.maxPurchasesItemsCountPerPage,
   );
 
   const handleShowMoreButtonClick = () => {
@@ -122,7 +122,7 @@ function BalancePage(): JSX.Element {
                 {trainings
                   .slice(
                     0,
-                    currentListPage * MAX_PURCHASES_ITEMS_COUNT_PER_PAGE,
+                    currentListPage * Pagination.maxPurchasesItemsCountPerPage,
                   )
                   .map((item) => (
                     <li key={item.id} className="my-purchases__item">

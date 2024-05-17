@@ -1,9 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import {
-  AppRoute,
-  MAX_SLIDER_USERS_COUNT,
-  MAX_SLIDER_USERS_COUNT_PER_PAGE,
-} from '../../constants';
+import { AppRoute, Slider} from '../../constants';
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 import { fetchUsersCatalogAction } from '../../redux/userSlice/apiUserActions';
@@ -25,7 +21,7 @@ function LookForCompany(): JSX.Element {
       fetchUsersCatalogAction({
         typesOfTraining: user?.typesOfTraining.join(','),
         isReady: true,
-        limit: MAX_SLIDER_USERS_COUNT,
+        limit: Slider.maxSliderUsersCount,
       }),
     );
   }, [dispatch, trainingsCurrentPage, user?.typesOfTraining]);
@@ -39,7 +35,7 @@ function LookForCompany(): JSX.Element {
   const handleNextArrowButtonClick = () => {
     setTrainingsCurrentPage((prevState) =>
       trainingsCurrentPage <
-      MAX_SLIDER_USERS_COUNT / MAX_SLIDER_USERS_COUNT_PER_PAGE
+    Slider.maxSliderUsersCount / Slider.maxSliderUsersCountPerPage
         ? prevState + 1
         : prevState,
     );
@@ -90,8 +86,8 @@ function LookForCompany(): JSX.Element {
             {readyForTrainingUsers
               .filter((item) => user?.userId !== item?.userId)
               .slice(
-                (trainingsCurrentPage - 1) * MAX_SLIDER_USERS_COUNT_PER_PAGE,
-                trainingsCurrentPage * MAX_SLIDER_USERS_COUNT_PER_PAGE,
+                (trainingsCurrentPage - 1) * Slider.maxSliderUsersCountPerPage,
+                trainingsCurrentPage * Slider.maxSliderUsersCountPerPage,
               )
               .map((user) => (
                 <LookForCompanyItem key={user.userId} user={user} />

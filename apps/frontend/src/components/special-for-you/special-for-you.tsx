@@ -1,12 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useAppDispatch, useAppSelector } from '../../redux/store';
 import { getUser } from '../../redux/userSlice/selectors';
-import {
-  MAX_CALORIES_COUNT_COEFFICIENT,
-  MAX_SLIDER_TRAININGS_COUNT,
-  MAX_SLIDER_TRAININGS_PER_PAGE,
-  MIN_CALORIES_COUNT_COEFFICIENT,
-} from '../../constants';
+import { CalorieCoefficients, Slider } from '../../constants';
 import { fetchRecommendedTrainingsAction } from '../../redux/trainingSlice/apiTrainingActions';
 import { getRecommendedTrainings } from '../../redux/trainingSlice/selectors';
 import { ArrowLeft, ArrowRight } from '../../helper/svg-const';
@@ -27,16 +22,16 @@ function SpecialForYou(): JSX.Element {
 
   if (userDailyCaloriesCount) {
     caloriesMin =
-      userDailyCaloriesCount * MIN_CALORIES_COUNT_COEFFICIENT < 1000 ||
-      userDailyCaloriesCount * MIN_CALORIES_COUNT_COEFFICIENT > 5000
+      userDailyCaloriesCount * CalorieCoefficients.minCaloriesCountCoefficient < 1000 ||
+      userDailyCaloriesCount * CalorieCoefficients.minCaloriesCountCoefficient > 5000
         ? 1000
-        : +(userDailyCaloriesCount * MIN_CALORIES_COUNT_COEFFICIENT).toFixed(0);
+        : +(userDailyCaloriesCount * CalorieCoefficients.minCaloriesCountCoefficient).toFixed(0);
 
     caloriesMax =
-      userDailyCaloriesCount * MAX_CALORIES_COUNT_COEFFICIENT < 1000 ||
-      userDailyCaloriesCount * MAX_CALORIES_COUNT_COEFFICIENT > 5000
+      userDailyCaloriesCount * CalorieCoefficients.maxCaloriesCountCoefficient < 1000 ||
+      userDailyCaloriesCount * CalorieCoefficients.maxCaloriesCountCoefficient > 5000
         ? 5000
-        : +(userDailyCaloriesCount * MAX_CALORIES_COUNT_COEFFICIENT).toFixed(0);
+        : +(userDailyCaloriesCount * CalorieCoefficients.maxCaloriesCountCoefficient).toFixed(0);
   }
 
   const [trainingsCurrentPage, setTrainingsCurrentPage] = useState(1);
@@ -55,7 +50,7 @@ function SpecialForYou(): JSX.Element {
           levelOfUser: userTrainingLevel,
           caloriesMin,
           caloriesMax,
-          limit: MAX_SLIDER_TRAININGS_COUNT,
+          limit: Slider.maxSliderTrainingsCount,
         }),
       );
     }
@@ -78,7 +73,7 @@ function SpecialForYou(): JSX.Element {
   const handleNextArrowButtonClick = () => {
     setTrainingsCurrentPage((prevState) =>
       trainingsCurrentPage <
-      MAX_SLIDER_TRAININGS_COUNT / MAX_SLIDER_TRAININGS_PER_PAGE
+      Slider.maxSliderTrainingsCount / Slider.maxSliderTrainingsPerPage
         ? prevState + 1
         : prevState,
     );
@@ -118,8 +113,8 @@ function SpecialForYou(): JSX.Element {
           <ul className="special-for-you__list">
             {specialForYouTrainings
               .slice(
-                (trainingsCurrentPage - 1) * MAX_SLIDER_TRAININGS_PER_PAGE,
-                trainingsCurrentPage * MAX_SLIDER_TRAININGS_PER_PAGE,
+                (trainingsCurrentPage - 1) * Slider.maxSliderTrainingsPerPage,
+                trainingsCurrentPage * Slider.maxSliderTrainingsPerPage,
               )
               .map((training) => (
                 <SpecialForYouItem key={training.id} training={training} />
