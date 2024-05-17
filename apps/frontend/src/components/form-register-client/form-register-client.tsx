@@ -57,7 +57,6 @@ function FormRegisgerClient() {
     register,
     handleSubmit,
     reset,
-    watch,
     formState: { isDirty, isSubmitting, errors },
   } = useForm<FormSchema>({ resolver: zodResolver(formSchema) });
 

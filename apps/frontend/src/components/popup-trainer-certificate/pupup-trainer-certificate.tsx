@@ -5,7 +5,6 @@ import {
   ArrowLeft,
   ArrowRight,
   IconCross,
-  IconCrown,
 } from '../../helper/svg-const';
 
 type PopupTrainerCertificatesProps = {

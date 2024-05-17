@@ -64,7 +64,6 @@ function FormRegisterTrainer() {
     register,
     handleSubmit,
     reset,
-    watch,
     formState: { isSubmitting, errors },
   } = useForm<FormSchema>({ resolver: zodResolver(formSchema) });
 
