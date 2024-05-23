@@ -5,7 +5,7 @@ import { AppRoute, Pagination } from '../../constants';
 import { getUserId, getUsers } from '../../redux/userSlice/selectors';
 import { useAppSelector } from '../../redux/store';
 import UsersCatalogFilter from '../../components/user-catalog-filter/user-catalog-filter';
-import UsersCatalogItem from '../../components/user-catalog-item/user-catalog-item';
+import UsersCatalogItem from '../../components/user-catalog-item/users-catalog-item';
 
 function UsersCatalog(): JSX.Element {
   const navigate = useNavigate();

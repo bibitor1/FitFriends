@@ -136,7 +136,10 @@ function FormRegisterTrainer() {
   return (
     <>
       <BackgroundLogo />
-      <div className="popup-form popup-form--questionnaire-coach">
+      <div
+        className="popup-form popup-form--questionnaire-coach"
+        data-testid="form-register-trainer"
+      >
         <div className="popup-form__wrapper">
           <div className="popup-form__content">
             <div className="popup-form__form">

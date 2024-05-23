@@ -32,7 +32,6 @@ axiosInstance.interceptors.request.use(
   async (config: InternalAxiosRequestConfig) => {
     const token = getAccessToken();
     if (!token) {
-      console.log('No token, ');
       config.headers.Authorization = `Bearer ${token}`;
       return config;
     }

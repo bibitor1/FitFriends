@@ -20,7 +20,7 @@ import {
   toggleSubscribeAction,
 } from '../../redux/userSlice/apiUserActions';
 import { fetchTrainerTrainingsAction } from '../../redux/trainingSlice/apiTrainingActions';
-import PopupTrainerCertificates from '../popup-trainer-certificate/pupup-trainer-certificate';
+import PopupTrainerCertificates from '../popup-trainer-certificate/popup-trainer-certificate';
 import {
   ArrowCheck,
   ArrowLeft,
@@ -102,7 +102,7 @@ function UserCardTrainer({ trainer }: UserCardTrainerProps): JSX.Element {
 
   return (
     <>
-      <section className="user-card-coach" data-testid="user-card-coach">
+      <section className="user-card-coach" data-testid="user-card-trainer">
         <h1 className="visually-hidden">Карточка пользователя роль тренер</h1>
         <div className="user-card-coach__wrapper">
           <div className="user-card-coach__card">
