@@ -9,7 +9,8 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "outputPath": "dist/apps/frontend"
+        "outputPath": "dist/apps/frontend",
+        "generatePackageJson": true
       },
       "configurations": {
         "development": {
@@ -65,6 +66,15 @@
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/frontend/**/*.{ts,tsx,js,jsx}"]
+      }
+    },
+    "buildImage": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "nx build frontend",
+          "docker build --file ./apps/frontend/Dockerfile --tag fit-friends-frontend:latest ."
+        ]
       }
     }
   },
