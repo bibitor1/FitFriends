@@ -84,7 +84,7 @@ function LookForCompany(): JSX.Element {
           </div>
           <ul className="look-for-company__list">
             {readyForTrainingUsers
-              .filter((item) => user?.userId !== item?.userId)
+              ?.filter((item) => user?.userId !== item?.userId)
               .slice(
                 (trainingsCurrentPage - 1) * Slider.maxSliderUsersCountPerPage,
                 trainingsCurrentPage * Slider.maxSliderUsersCountPerPage,

@@ -39,7 +39,7 @@ function FriendsListPage(): JSX.Element {
   const inOrders = useAppSelector(getInPersonalOrders);
 
   const [currentListPage, setCurrentListPage] = useState(1);
-  const pagesCount = Math.ceil(myFriends.length / Pagination.maxFriendsCountPerPage);
+  const pagesCount = Math.ceil(myFriends?.length / Pagination.maxFriendsCountPerPage);
 
   const [onlineFilterChecked, setOnlineFilterChecked] = useState(false);
 
@@ -92,7 +92,7 @@ function FriendsListPage(): JSX.Element {
     <>
       <Header />
       <main>
-        <section className="friends-list">
+        <section className="friends-list" data-testid="friends-list-page">
           <div className="container">
             <div className="friends-list__wrapper">
               <button
@@ -129,7 +129,7 @@ function FriendsListPage(): JSX.Element {
               </div>
               <ul className="friends-list__list">
                 {myFriends
-                  .filter((user) => filterOfflineUsers(user))
+                  ?.filter((user) => filterOfflineUsers(user))
                   .slice(0, currentListPage * Pagination.maxFriendsCountPerPage)
                   .map((friend) => (
                     <FriendsListItem

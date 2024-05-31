@@ -15,7 +15,7 @@ function TrainerTrainingsPage(): JSX.Element {
 
   const [trainingsPage, setTrainingsPage] = useState(1);
   const pagesCount = Math.ceil(
-    currentTrainings.length / Pagination.maxTrainingsCountPerPage,
+    currentTrainings?.length / Pagination.maxTrainingsCountPerPage,
   );
 
   const handleShowMoreButtonClick = () => {
@@ -57,7 +57,7 @@ function TrainerTrainingsPage(): JSX.Element {
                 <div className="my-trainings">
                   <ul className="my-trainings__list">
                     {currentTrainings
-                      .slice(0, trainingsPage * Pagination.maxTrainingsCountPerPage)
+                      ?.slice(0, trainingsPage * Pagination.maxTrainingsCountPerPage)
                       .map((training) => (
                         <li key={training.id} className="my-trainings__item">
                           <TrainingThumbnail training={training} />
