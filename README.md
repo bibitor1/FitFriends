@@ -32,3 +32,17 @@ up -d`
 2. Выполните команду `npx nx run frontend:serve` для запуска клиентской части проекта.
 
 npx nx run frontend:test
+
+npx nx build backend --prod
+
+docker build --file ./apps/backend/Dockerfile --tag fit-friends-backend:latest .
+
+npx nx build frontend --prod
+
+docker build --file ./apps/frontend/Dockerfile --tag fit-friends-frontend:latest .
+
+`docker compose \
+--file docker-compose.prod.yml \
+--env-file .env \
+--project-name "fitfriends" \
+up -d`
