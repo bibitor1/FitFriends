@@ -12,7 +12,7 @@ API проекта находится по адресу: http://localhost:4000/s
 
 3. Для создания контейнера базы данных в докере выполните команду:
 `docker compose \
---file docker-compose.yml \
+--file docker-compose.dev.yml \
 --env-file .env \
 --project-name "fitfriends" \
 up -d`
@@ -30,3 +30,5 @@ up -d`
 1. Создайте в папке frontend .env файл и скопируйте туда переменные окружения из файла .env-example;
 
 2. Выполните команду `npx nx run frontend:serve` для запуска клиентской части проекта.
+
+npx nx run frontend:test

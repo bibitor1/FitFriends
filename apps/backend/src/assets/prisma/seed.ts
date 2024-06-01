@@ -1,24 +1,24 @@
+/* eslint-disable @nx/enforce-module-boundaries */
 import { PrismaClient } from '@prisma/client';
 import { faker } from '@faker-js/faker';
 
 // такие пути импортов для ts-node, иначе не работает
-import { TrainingDuration } from '@fit-friends/types';
-import { TypeOfOrder } from '@fit-friends/types';
-import { TypeOfPayment } from '@fit-friends/types';
-import { UserGender } from '@fit-friends/types';
-import { UserLevel } from '@fit-friends/types';
-import { UserLocation } from '@fit-friends/types';
-import { UserRole } from '@fit-friends/types';
-import { UserTypesTraining } from '@fit-friends/types';
-import { trainingGender } from '@fit-friends/types';
-import { OrderStatus } from '@fit-friends/types';
+import { TrainingDuration } from '../../../../../libs/types/src/lib/training-duration.enum';
+import { TypeOfOrder } from '../../../../../libs/types/src/lib/type-of-order.enum';
+import { TypeOfPayment } from '../../../../../libs/types/src/lib/type-of-payment.enum';
+import { UserGender } from '../../../../../libs/types/src/lib/user-gender.enum';
+import { UserLevel } from '../../../../../libs/types/src/lib/user-level.enum';
+import { UserLocation } from '../../../../../libs/types/src/lib/user-location.enum';
+import { UserRole } from '../../../../../libs/types/src/lib/user-role.enum';
+import { UserTypesTraining } from '../../../../../libs/types/src/lib/user-types-training.enum';
+import { trainingGender } from '../../../../../libs/types/src/lib/constants/validation.constants';
+import { OrderStatus } from '../../../../../libs/types/src/lib/order-status.enum';
 
 const ITEM_COUNT = 100;
 
 const prisma = new PrismaClient();
 
 async function fiilDb() {
-  // clean db
   await prisma.$transaction([
     prisma.user.deleteMany(),
     prisma.feedback.deleteMany(),
@@ -27,7 +27,6 @@ async function fiilDb() {
     prisma.training.deleteMany(),
   ]);
 
-  // create items
   for (let i = 0; i < ITEM_COUNT; i++) {
     const qtt = faker.number.int({ min: 1, max: 10 });
     const priceTemp = faker.number.int({ min: 0, max: 1000 });
