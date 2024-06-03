@@ -51,7 +51,7 @@ const formSchema = z.object({
     .min(UserPasswordLength.Min, 'Пароль слишком короткий')
     .max(UserPasswordLength.Max, 'Пароль слишком длинный'),
   gender: z.enum(GENDER_ZOD),
-  role: z.enum(ROLE_ZOD),
+  role: z.enum(ROLE_ZOD, { required_error: 'Пожалуйста, выберите роль.' }),
   terms: z.literal(true, {
     errorMap: () => ({ message: 'Согласие обязательно' }),
   }),
@@ -71,8 +71,8 @@ function FormRegister() {
     reset,
     setFocus,
     watch,
-    formState: { isDirty, isSubmitting, errors },
-  } = useForm<FormSchema>({ resolver: zodResolver(formSchema) });
+    formState: { isDirty, isSubmitting, errors, isValid },
+  } = useForm<FormSchema>({ resolver: zodResolver(formSchema), mode: 'onChange' });
 
   useEffect(() => {
     if (isAuth) {
@@ -119,6 +119,10 @@ function FormRegister() {
   };
 
   const onSubmit: SubmitHandler<FormSchema> = async (data) => {
+    if (!data.role) {
+      return;
+    }
+
     if (avatarInputUsed && !avatarError) {
       let newData: CreateUserDto;
 
@@ -283,179 +287,184 @@ function FormRegister() {
                           isSelectOpened
                             ? 'is-open'
                             : 'custom-select--not-selected'
+                          }
+                        `}
+            >
+              <span className="custom-select__label">Ваша локация</span>
+              <button
+                onClick={() => setIsSelectOpened((prevState) => !prevState)}
+                className="custom-select__button"
+                type="button"
+                aria-label="Выберите одну из опций"
+              >
+                <span className="custom-select__text">{watch('location')}</span>
+                <span className="custom-select__icon">
+                  <svg width="15" height="6" aria-hidden="true">
+                    <ArrowDown />
+                  </svg>
+                </span>
+              </button>
+              <ul
+                className="custom-select__list"
+                role="listbox"
+                onClick={() => setIsSelectOpened((prevState) => !prevState)}
+              >
+                {LOCATIONS_ZOD.map((station, i) => (
+                  <li
+                    key={`location-${i} ${station}`}
+                    className="custom-select__item"
+                  >
+                    <label htmlFor={station} className="custom-label">
+                      <input
+                        {...register('location')}
+                        disabled={isSubmitting}
+                        hidden
+                        type="radio"
+                        id={station}
+                        name="location"
+                        value={station}
+                        onClick={() =>
+                          setIsSelectOpened((prevState) => !prevState)
                         }
-                      `}
-          >
-            <span className="custom-select__label">Ваша локация</span>
-            <button
-              onClick={() => setIsSelectOpened((prevState) => !prevState)}
-              className="custom-select__button"
-              type="button"
-              aria-label="Выберите одну из опций"
-            >
-              <span className="custom-select__text">{watch('location')}</span>
-              <span className="custom-select__icon">
-                <svg width="15" height="6" aria-hidden="true">
-                  <ArrowDown />
-                </svg>
-              </span>
-            </button>
-            <ul
-              className="custom-select__list"
-              role="listbox"
-              onClick={() => setIsSelectOpened((prevState) => !prevState)}
-            >
-              {LOCATIONS_ZOD.map((station, i) => (
-                <li
-                  key={`location-${i} ${station}`}
-                  className="custom-select__item"
-                >
-                  <label htmlFor={station} className="custom-label">
-                    <input
-                      {...register('location')}
-                      disabled={isSubmitting}
-                      hidden
-                      type="radio"
-                      id={station}
-                      name="location"
-                      value={station}
-                      onClick={() =>
-                        setIsSelectOpened((prevState) => !prevState)
-                      }
-                    />
-                    {station}
-                  </label>
-                </li>
-              ))}
-            </ul>
-            {errors.location && (
+                      />
+                      {station}
+                    </label>
+                  </li>
+                ))}
+              </ul>
+              {errors.location && (
+                <span role="alert" className="error">
+                  {errors.location?.message}
+                </span>
+              )}
+            </div>
+            <div className="custom-input">
+              <label>
+                <span className="custom-input__label">Пароль</span>
+                <span className="custom-input__wrapper">
+                  <input
+                    {...register('password')}
+                    disabled={isSubmitting}
+                    type="password"
+                    name="password"
+                    placeholder="Не менее 6 символов"
+                    autoComplete="off"
+                    aria-invalid={errors.password ? 'true' : 'false'}
+                  />
+                  {errors.password && (
+                    <span role="alert" className="error">
+                      {errors.password?.message}
+                    </span>
+                  )}
+                </span>
+              </label>
+            </div>
+            <div className="sign-up__radio">
+              <span className="sign-up__label">Пол</span>
+              <div className="custom-toggle-radio custom-toggle-radio--big">
+                {GENDER_ZOD.map((gender) => (
+                  <div key={gender} className="custom-toggle-radio__block">
+                    <label>
+                      <input
+                        {...register('gender')}
+                        disabled={isSubmitting}
+                        type="radio"
+                        name="gender"
+                        value={gender}
+                      />
+                      <span className="custom-toggle-radio__icon"></span>
+                      <span className="custom-toggle-radio__label">
+                        {upFirstWord(gender)}
+                      </span>
+                    </label>
+                  </div>
+                ))}
+              </div>
+              {errors.gender && (
+                <span role="alert" className="error">
+                  {errors.gender?.message}
+                </span>
+              )}
+            </div>
+          </div>
+          <div className="sign-up__role">
+            <h2 className="sign-up__legend">Выберите роль</h2>
+            <div className="role-selector sign-up__role-selector">
+              <div className="role-btn">
+                <label>
+                  <input
+                    {...register('role')}
+                    disabled={isSubmitting}
+                    className="visually-hidden"
+                    type="radio"
+                    name="role"
+                    value="тренер"
+                  />
+                  <span className="role-btn__icon">
+                    <svg width="12" height="13" aria-hidden="true">
+                      <IconCup />
+                    </svg>
+                  </span>
+                  <span className="role-btn__btn">Я хочу тренировать</span>
+                </label>
+              </div>
+              <div className="role-btn">
+                <label>
+                  <input
+                    {...register('role')}
+                    disabled={isSubmitting}
+                    className="visually-hidden"
+                    type="radio"
+                    name="role"
+                    value="пользователь"
+                  />
+                  <span className="role-btn__icon">
+                    <svg width="12" height="13" aria-hidden="true">
+                      <IconWeight />
+                    </svg>
+                  </span>
+                  <span className="role-btn__btn">Я хочу тренироваться</span>
+                </label>
+              </div>
+            </div>
+            {errors.role && (
               <span role="alert" className="error">
-                {errors.location?.message}
+                {errors.role?.message}
               </span>
             )}
           </div>
-          <div className="custom-input">
+          <div className="sign-up__checkbox">
             <label>
-              <span className="custom-input__label">Пароль</span>
-              <span className="custom-input__wrapper">
-                <input
-                  {...register('password')}
-                  disabled={isSubmitting}
-                  type="password"
-                  name="password"
-                  placeholder="Не менее 6 символов"
-                  autoComplete="off"
-                  aria-invalid={errors.password ? 'true' : 'false'}
-                />
-                {errors.password && (
-                  <span role="alert" className="error">
-                    {errors.password?.message}
-                  </span>
-                )}
+              <input
+                {...register('terms')}
+                disabled={isSubmitting}
+                id="terms"
+                aria-describedby="terms"
+                type="checkbox"
+                name="terms"
+                aria-invalid={errors.terms ? 'true' : 'false'}
+              />
+              <span className="sign-up__checkbox-icon">
+                <svg width="9" height="6" aria-hidden="true">
+                  <ArrowCheck />
+                </svg>
+              </span>
+              <span className="sign-up__checkbox-label">
+                Я соглашаюсь с <span>политикой конфиденциальности</span> компании
               </span>
             </label>
           </div>
-          <div className="sign-up__radio">
-            <span className="sign-up__label">Пол</span>
-            <div className="custom-toggle-radio custom-toggle-radio--big">
-              {GENDER_ZOD.map((gender) => (
-                <div key={gender} className="custom-toggle-radio__block">
-                  <label>
-                    <input
-                      {...register('gender')}
-                      disabled={isSubmitting}
-                      type="radio"
-                      name="gender"
-                      value={gender}
-                    />
-                    <span className="custom-toggle-radio__icon"></span>
-                    <span className="custom-toggle-radio__label">
-                      {upFirstWord(gender)}
-                    </span>
-                  </label>
-                </div>
-              ))}
-            </div>
-            {errors.gender && (
-              <span role="alert" className="error">
-                {errors.gender?.message}
-              </span>
-            )}
-          </div>
+          {errors.terms && <span className="error">{errors.terms?.message}</span>}
+          <button
+            className="btn sign-up__button"
+            type="submit"
+            disabled={!isDirty || isSubmitting || !isValid}
+          >
+            Продолжить
+          </button>
         </div>
-        <div className="sign-up__role">
-          <h2 className="sign-up__legend">Выберите роль</h2>
-          <div className="role-selector sign-up__role-selector">
-            <div className="role-btn">
-              <label>
-                <input
-                  {...register('role')}
-                  disabled={isSubmitting}
-                  className="visually-hidden"
-                  type="radio"
-                  name="role"
-                  value="тренер"
-                />
-                <span className="role-btn__icon">
-                  <svg width="12" height="13" aria-hidden="true">
-                    <IconCup />
-                  </svg>
-                </span>
-                <span className="role-btn__btn">Я хочу тренировать</span>
-              </label>
-            </div>
-            <div className="role-btn">
-              <label>
-                <input
-                  {...register('role')}
-                  disabled={isSubmitting}
-                  className="visually-hidden"
-                  type="radio"
-                  name="role"
-                  value="пользователь"
-                />
-                <span className="role-btn__icon">
-                  <svg width="12" height="13" aria-hidden="true">
-                    <IconWeight />
-                  </svg>
-                </span>
-                <span className="role-btn__btn">Я хочу тренироваться</span>
-              </label>
-            </div>
-          </div>
-        </div>
-        <div className="sign-up__checkbox">
-          <label>
-            <input
-              {...register('terms')}
-              disabled={isSubmitting}
-              id="terms"
-              aria-describedby="terms"
-              type="checkbox"
-              name="terms"
-              aria-invalid={errors.terms ? 'true' : 'false'}
-            />
-            <span className="sign-up__checkbox-icon">
-              <svg width="9" height="6" aria-hidden="true">
-                <ArrowCheck />
-              </svg>
-            </span>
-            <span className="sign-up__checkbox-label">
-              Я соглашаюсь с <span>политикой конфиденциальности</span> компании
-            </span>
-          </label>
-        </div>
-        {errors.terms && <span className="error">{errors.terms?.message}</span>}
-        <button
-          className="btn sign-up__button"
-          type="submit"
-          disabled={!isDirty || isSubmitting || !watch('terms') || !errors}
-        >
-          Продолжить
-        </button>
-      </div>
-    </form>
-  );
-}
+      </form>
+    );
+  }
 
-export default FormRegister;
+  export default FormRegister;

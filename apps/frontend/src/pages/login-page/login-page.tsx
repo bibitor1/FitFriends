@@ -3,7 +3,7 @@ import { loginUserAction } from '../../redux/userSlice/apiUserActions';
 import { z } from 'zod';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { UserPasswordLength } from '@fit-friends/types';
 import { getIsAuth, getIsTrainer } from '../../redux/userSlice/selectors';
 import { useNavigate } from 'react-router-dom';
@@ -23,44 +23,34 @@ type FormSchema = z.infer<typeof formSchema>;
 function LoginPage(): JSX.Element {
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
+  const [loginError, setLoginError] = useState<string | null>(null);
 
   const isAuth = useAppSelector(getIsAuth);
   const isTrainer = useAppSelector(getIsTrainer);
 
   useEffect(() => {
-    if (isTrainer && isAuth) {
-      navigate(AppRoute.TrainerRoom);
+    if (isAuth) {
+      if (isTrainer) {
+        navigate(AppRoute.TrainerRoom);
+      } else {
+        navigate(AppRoute.Main);
+      }
     }
-    if (!isTrainer && isAuth) {
-      navigate(AppRoute.Main);
-    }
-  }, [isTrainer, isAuth, navigate]);
+  }, [isAuth, isTrainer, navigate]);
 
   const {
     register,
     handleSubmit,
-    reset,
     setFocus,
     formState: { isDirty, isSubmitting, errors },
   } = useForm<FormSchema>({ resolver: zodResolver(formSchema) });
 
-  const onSubmit: SubmitHandler<FormSchema> = (data) => {
-    dispatch(loginUserAction(data))
-      .then(() => {
-        if (!isAuth) {
-          navigate(AppRoute.Intro);
-        }
-        if (isTrainer && isAuth) {
-          navigate(AppRoute.TrainerRoom);
-        }
-        if (!isTrainer && isAuth) {
-          navigate(AppRoute.Main);
-        }
-        reset();
-      })
-      .catch(() => {
-        navigate(AppRoute.Intro);
-      });
+  const onSubmit: SubmitHandler<FormSchema> = async (data) => {
+    try {
+      await dispatch(loginUserAction(data)).unwrap();
+    } catch (error) {
+      setLoginError('Неверный email или пароль');
+    }
   };
 
   useEffect(() => {
@@ -137,6 +127,11 @@ function LoginPage(): JSX.Element {
                       </span>
                     </label>
                   </div>
+                  {loginError && (
+                    <div className="error-message">
+                      {loginError}
+                    </div>
+                  )}
                   <button
                     className="btn sign-in__button"
                     type="submit"

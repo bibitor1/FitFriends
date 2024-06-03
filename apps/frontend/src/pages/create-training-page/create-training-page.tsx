@@ -273,9 +273,7 @@ function CreateTrainingPage(): JSX.Element {
         isPromo: false,
       };
 
-      const dataCreateTraining = await dispatch(
-        createTrainingAction(trainingDto),
-      );
+      const dataCreateTraining = await dispatch(createTrainingAction(trainingDto));
 
       if (createTrainingAction.fulfilled.match(dataCreateTraining)) {
         toast.success('Тренировка успешно создана');
@@ -284,16 +282,19 @@ function CreateTrainingPage(): JSX.Element {
           const formData = new FormData();
           formData.append('file', videoFile);
           const dataVideo = await dispatch(uploadVideoAction(formData));
+
           if (uploadVideoAction.fulfilled.match(dataVideo)) {
             const path = dataVideo.payload.path;
             const id = dataCreateTraining.payload.id;
-            const dataUpdatedTraining = await dispatch(
-              updateTrainingAction({ id, video: path }),
-            );
+            const dataUpdatedTraining = await dispatch(updateTrainingAction({ id, video: path }));
             if (updateTrainingAction.fulfilled.match(dataUpdatedTraining)) {
               navigate(AppRoute.TrainerTrainings);
             }
+          } else {
+            navigate(AppRoute.TrainerTrainings);
           }
+        } else {
+          navigate(AppRoute.TrainerTrainings);
         }
       }
     }
